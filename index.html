@@ -385,25 +385,26 @@
     <h2><span class="num">🔑</span>Acesso</h2>
     <div id="tokenStatus"></div>
     <div class="tokenline" id="tokenForm">
-      <input type="password" class="mono" id="tokenInput" placeholder="Token do GitHub (github_pat_…)" autocomplete="off">
+      <input type="password" class="mono" id="tokenInput" placeholder="Senha de administrador" autocomplete="off">
       <button class="btn btn-primary btn-sm" id="btnToken">Conectar</button>
     </div>
     <details class="help">
-      <summary>Como gerar o token (uma vez só)</summary>
+      <summary>Como funciona o acesso</summary>
+      <p>A senha é validada no servidor (Vercel) — o token do GitHub fica guardado lá como variável de ambiente e <b>nunca chega ao navegador</b>. Sem a senha, a página funciona em modo somente leitura.</p>
+      <p><b>Configuração (uma vez só, pelo dono do projeto):</b></p>
       <ol>
-        <li>Acesse <code>github.com/settings/personal-access-tokens/new</code> (logado como dono do repositório ou colaborador)</li>
-        <li><b>Token name:</b> <code>simulador-admin</code> · <b>Expiration:</b> 1 ano (ou o que preferir)</li>
-        <li><b>Repository access:</b> Only select repositories → <code>simulador-kard</code></li>
-        <li><b>Permissions → Repository permissions → Contents:</b> <code>Read and write</code></li>
-        <li>Generate token e cole aqui. O token fica salvo <b>somente neste navegador</b>.</li>
+        <li>Vercel → projeto <code>simulador-kard</code> → <b>Settings → Environment Variables</b></li>
+        <li>Adicione <code>GITHUB_TOKEN</code> = token fine-grained com <i>Contents: Read and write</i> no repositório</li>
+        <li>Adicione <code>ADMIN_PASSWORD</code> = a senha que a equipe vai usar aqui</li>
+        <li><b>Deployments → ⋯ → Redeploy</b> para aplicar</li>
       </ol>
-      <p>Sem token, a página funciona em modo somente leitura. Cada pessoa que for editar precisa do próprio token (sendo colaboradora do repositório).</p>
+      <p>Para trocar a senha depois, basta editar <code>ADMIN_PASSWORD</code> na Vercel e redeployar.</p>
     </details>
   </section>
 
   <section class="card" id="listCard">
     <h2><span class="num" id="countBadge">…</span>Convênios</h2>
-    <div id="roWarn" class="warnbar hidden">Modo somente leitura — conecte um token para salvar alterações.</div>
+    <div id="roWarn" class="warnbar hidden">Modo somente leitura — conecte com a senha de administrador para salvar alterações.</div>
     <div class="listhead">
       <input type="text" id="search" placeholder="Buscar convênio…">
       <button class="btn btn-primary btn-sm" id="btnNovo">＋ Novo</button>
@@ -827,16 +828,14 @@ $('idade').addEventListener('input', e=>{
 });
 
 /* ================================================================
-   ADMIN (aba #admin) — edita convenios.json via API do GitHub
+   ADMIN (aba #admin) — salva via função serverless /api/convenios.
+   O token do GitHub fica em variável de ambiente na Vercel;
+   o navegador só conhece a senha de administrador.
    ================================================================ */
-const REPO = 'MohamadKDB/simulador-kard';
-const FILE = 'convenios.json';
-const BRANCH = 'main';
-const API = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+const API = '/api/convenios';
 
-let token = localStorage.getItem('kard_admin_token') || '';
+let adminPass = localStorage.getItem('kard_admin_pass') || '';
 let aData = [];        // cópia de trabalho do admin
-let aSha = null;       // sha do arquivo no GitHub (necessário pro commit)
 let readOnly = true;
 let editIdx = -1;      // -1 = novo
 let draft = null;      // convênio em edição
@@ -859,50 +858,37 @@ function slugify(s){
   return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
 }
-function b64encodeUtf8(str){
-  const bytes = new TextEncoder().encode(str);
-  let bin = '';
-  for(let i=0;i<bytes.length;i+=0x8000){
-    bin += String.fromCharCode.apply(null, bytes.subarray(i,i+0x8000));
-  }
-  return btoa(bin);
-}
-function b64decodeUtf8(b64){
-  const bin = atob(b64.replace(/\s/g,''));
-  const bytes = new Uint8Array(bin.length);
-  for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
-}
 function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
 
+async function checkPass(p){
+  const r = await fetch(API, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({password: p, check: true})
+  });
+  return r;
+}
+
 async function adminLoad(){
-  if(token){
-    try{
-      const r = await fetch(`${API}?ref=${BRANCH}&t=${Date.now()}`, {
-        headers:{ 'Authorization':`Bearer ${token}`, 'Accept':'application/vnd.github+json' }
-      });
-      if(r.status===401 || r.status===403){
-        toast('Token inválido ou sem permissão neste repositório.', true);
-        setReadOnly(true);
-      } else if(r.ok){
-        const j = await r.json();
-        aSha = j.sha;
-        aData = JSON.parse(b64decodeUtf8(j.content));
-        setReadOnly(false);
-        renderTokenStatus();
-        renderAdminList();
-        return;
-      } else {
-        toast(`Erro ${r.status} ao carregar do GitHub.`, true);
-      }
-    }catch(e){
-      toast('Falha de rede ao acessar o GitHub.', true);
-    }
+  // dados: tenta a API (leitura sempre fresca); senão, o json do deploy
+  try{
+    const r = await fetch(`${API}?t=${Date.now()}`, {cache:'no-store'});
+    if(!r.ok) throw 0;
+    aData = (await r.json()).data;
+  }catch(e){
+    aData = JSON.parse(JSON.stringify(CONVENIOS));
   }
-  // sem token: usa os dados já carregados pelo simulador (somente leitura)
-  aData = JSON.parse(JSON.stringify(CONVENIOS));
-  setReadOnly(true);
-  renderTokenStatus();
+  // acesso: revalida a senha salva neste navegador
+  if(adminPass){
+    try{
+      const r = await checkPass(adminPass);
+      setReadOnly(!r.ok);
+      if(r.status===401) toast('A senha salva não confere mais — reconecte.', true);
+    }catch(e){ setReadOnly(true); }
+  } else {
+    setReadOnly(true);
+  }
+  renderAccessStatus();
   renderAdminList();
 }
 
@@ -911,20 +897,20 @@ function setReadOnly(ro){
   $('roWarn').classList.toggle('hidden', !ro);
 }
 
-function renderTokenStatus(){
+function renderAccessStatus(){
   const st = $('tokenStatus');
-  if(token && !readOnly){
+  if(adminPass && !readOnly){
     st.innerHTML = '<span class="pill ok">● conectado — pode salvar</span>&nbsp; <button class="btn btn-ghost btn-xs" id="btnLogout">desconectar</button>';
     $('btnLogout').onclick = logout;
     $('tokenForm').classList.add('hidden');
   } else {
-    st.innerHTML = token ? '<span class="pill ro">token salvo, mas sem acesso — verifique e reconecte</span>' : '';
+    st.innerHTML = adminPass ? '<span class="pill ro">senha salva, mas sem acesso — reconecte</span>' : '';
     $('tokenForm').classList.remove('hidden');
   }
 }
 function logout(){
-  token=''; localStorage.removeItem('kard_admin_token');
-  aSha=null; adminLoad();
+  adminPass=''; localStorage.removeItem('kard_admin_pass');
+  adminLoad();
 }
 
 /* ---------- lista ---------- */
@@ -986,7 +972,7 @@ function openEditor(i){
   $('eCategoria').value = draft.categoria;
   $('eVigencia').value = draft.vigencia;
   $('btnExcluir').classList.toggle('hidden', i<0);
-  $('saveHint').textContent = readOnly ? 'Modo somente leitura — conecte um token para salvar.' : '';
+  $('saveHint').textContent = readOnly ? 'Modo somente leitura — conecte com a senha para salvar.' : '';
   renderEditorOfertas();
   $('listCard').classList.add('hidden');
   $('editorCard').classList.remove('hidden');
@@ -1146,30 +1132,18 @@ function uniqueId(base){
 }
 
 async function commitJson(newData, message){
-  const body = {
-    message: `admin: ${message}`,
-    content: b64encodeUtf8(JSON.stringify(newData, null, 2) + '\n'),
-    branch: BRANCH
-  };
-  if(aSha) body.sha = aSha;
   const r = await fetch(API, {
-    method:'PUT',
-    headers:{ 'Authorization':`Bearer ${token}`, 'Accept':'application/vnd.github+json' },
-    body: JSON.stringify(body)
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({password: adminPass, data: newData, message})
   });
-  if(r.status===409){
-    throw new Error('Conflito: o arquivo mudou desde que você carregou (outra pessoa salvou?). Recarregue a página e refaça.');
-  }
-  if(r.status===401 || r.status===403){
-    throw new Error('Token sem permissão de escrita. Verifique o token (Contents: Read and write).');
-  }
   if(!r.ok){
     let msg = `Erro ${r.status} ao salvar.`;
-    try{ msg += ' ' + (await r.json()).message; }catch(e){}
+    try{ msg = (await r.json()).error || msg; }catch(e){}
+    if(r.status===404 || r.status===501) msg = 'API não disponível neste endereço — use o link da Vercel.';
+    if(r.status===401){ setReadOnly(true); renderAccessStatus(); }
     throw new Error(msg);
   }
-  const j = await r.json();
-  aSha = j.content.sha;
   aData = newData;
   // atualiza o simulador em memória, sem esperar o redeploy
   CONVENIOS = newData;
@@ -1186,7 +1160,7 @@ function rebuildSimulador(){
 }
 
 async function salvar(){
-  if(readOnly){ toast('Conecte um token para salvar.', true); return; }
+  if(readOnly){ toast('Conecte com a senha para salvar.', true); return; }
   const err = validate();
   if(err){ toast(err, true); return; }
   const conv = fromDraft();
@@ -1208,7 +1182,7 @@ async function salvar(){
 }
 
 async function excluir(){
-  if(readOnly){ toast('Conecte um token para salvar.', true); return; }
+  if(readOnly){ toast('Conecte com a senha para salvar.', true); return; }
   const nome = aData[editIdx].nome;
   if(!confirm(`Excluir o convênio "${nome}"? Essa ação será publicada no site.`)) return;
   const newData = aData.slice();
@@ -1228,13 +1202,33 @@ async function excluir(){
 }
 
 /* ---------- eventos admin ---------- */
-$('btnToken').onclick = ()=>{
-  const t = $('tokenInput').value.trim();
-  if(!t){ toast('Cole o token primeiro.', true); return; }
-  token = t;
-  localStorage.setItem('kard_admin_token', t);
-  $('tokenInput').value='';
-  adminLoad();
+$('btnToken').onclick = async ()=>{
+  const p = $('tokenInput').value.trim();
+  if(!p){ toast('Digite a senha primeiro.', true); return; }
+  const btn = $('btnToken');
+  btn.disabled = true; btn.textContent = '…';
+  try{
+    const r = await checkPass(p);
+    if(r.ok){
+      adminPass = p;
+      localStorage.setItem('kard_admin_pass', p);
+      $('tokenInput').value = '';
+      setReadOnly(false);
+      renderAccessStatus();
+      toast('✓ Conectado — pode salvar.');
+    } else if(r.status===401){
+      toast('Senha incorreta.', true);
+    } else if(r.status===404 || r.status===501){
+      toast('API não disponível neste endereço — use o link da Vercel.', true);
+    } else {
+      let msg=''; try{ msg=(await r.json()).error||''; }catch(e){}
+      toast(msg || `Erro ${r.status}.`, true);
+    }
+  }catch(e){
+    toast('Falha de rede.', true);
+  }finally{
+    btn.disabled = false; btn.textContent = 'Conectar';
+  }
 };
 $('search').addEventListener('input', renderAdminList);
 $('btnNovo').onclick = ()=> openEditor(-1);
