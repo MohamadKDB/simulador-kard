@@ -193,6 +193,11 @@
     border-top:1px solid rgba(255,255,255,.1);padding-top:18px;
   }
   .note .src{color:var(--green);}
+  .admin-link{
+    display:inline-block;margin-left:8px;color:#4A4F6A;text-decoration:none;
+    font-family:var(--mono);font-size:11px;
+  }
+  .admin-link:hover{color:var(--green);}
 </style>
 </head>
 <body>
@@ -297,12 +302,15 @@
 <footer>
   <p class="note">
     <span class="src">Fonte:</span> Roteiros Operacionais Kard, vigência 05–06/2026 (pasta DRIVE CORBAN KARD). Faixas de valor por idade ao fim do contrato: 21–71 anos até R$ 100.000; 72–77 anos até R$ 35.000; 78–79 anos até R$ 14.000. Regra geral de comprometimento global: até 70% do contracheque. Este simulador cobre o produto Cartão (RCC/RMC/Adiantamento Salarial); roteiros de Empréstimo Consignado não estão incluídos.
+    <a class="admin-link" href="admin.html">admin</a>
   </p>
 </footer>
 
 <script>
 /* ============================ DADOS ============================ */
-const CONVENIOS = [
+/* Fallback embutido — a fonte principal é convenios.json (editável pelo admin.html).
+   Este fallback só é usado se o fetch falhar (ex.: abrir o arquivo local sem servidor). */
+const CONVENIOS_FALLBACK = [
   {"id":"sapucaia-sul","nome":"Sapucaia do Sul","categoria":"Prefeitura Municipal","uf":"RS","vigencia":"02.06.2026",
    "ofertas":[
      {"rotulo":"Efetivos · Aposentados · Pensionistas","comprometimento":"5% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
@@ -424,6 +432,8 @@ const CONVENIOS = [
      "taxas":[{"taxa":4.50,"mult":{"36":15.32,"48":16.78,"60":17.60,"72":18.06,"84":18.32,"96":18.74}}]}]}
 ];
 
+let CONVENIOS = CONVENIOS_FALLBACK;
+
 const FAIXAS_IDADE = [
   {min:21,max:71,valorMax:100000},
   {min:72,max:77,valorMax:35000},
@@ -475,7 +485,19 @@ function initConvenios(){
     });
     sel.appendChild(og);
   });
-  $('badgeText').textContent = `${CONVENIOS.length} convênios · vigência 05–06/2026`;
+  $('badgeText').textContent = `${CONVENIOS.length} convênios · vigência ${vigenciaRange()}`;
+}
+
+function vigenciaRange(){
+  const pad = n=>String(n).padStart(2,'0');
+  const ms = CONVENIOS
+    .map(c=>{ const p=(c.vigencia||'').split('.'); return {m:+p[1],y:+p[2]}; })
+    .filter(v=>v.m>=1 && v.m<=12 && v.y>2000);
+  if(!ms.length) return '—';
+  ms.sort((a,b)=> a.y-b.y || a.m-b.m);
+  const a=ms[0], b=ms[ms.length-1];
+  if(a.y===b.y) return a.m===b.m ? `${pad(a.m)}/${a.y}` : `${pad(a.m)}–${pad(b.m)}/${a.y}`;
+  return `${pad(a.m)}/${a.y}–${pad(b.m)}/${b.y}`;
 }
 
 /* ============================ RENDER ETAPAS ============================ */
@@ -644,8 +666,18 @@ $('idade').addEventListener('input', e=>{
   compute();
 });
 
-initConvenios();
-compute();
+/* ============================ BOOT ============================ */
+(async function boot(){
+  try{
+    const r = await fetch('convenios.json?v='+Date.now(), {cache:'no-store'});
+    if(r.ok){
+      const d = await r.json();
+      if(Array.isArray(d) && d.length) CONVENIOS = d;
+    }
+  }catch(e){ /* offline/local: usa o fallback embutido */ }
+  initConvenios();
+  compute();
+})();
 </script>
 </body>
 </html>

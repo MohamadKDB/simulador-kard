@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#151A3D">
+<meta name="robots" content="noindex">
+<title>Admin — Simulador Kard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+  :root{
+    --navy:#151A3D;
+    --page:#0E1122;
+    --green:#34D399;
+    --green-dark:#12B87A;
+    --green-soft:#E9F9F0;
+    --white:#FFFFFF;
+    --ink:#1E2233;
+    --muted:#6B7280;
+    --line:#E3E4E0;
+    --red:#DC2626;
+    --red-soft:#FEECEC;
+    --sans:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--page);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+
+  .hero{background:var(--navy);color:var(--white);padding:22px;position:relative;overflow:hidden;}
+  .hero-inner{max-width:760px;margin:0 auto;position:relative;z-index:1;}
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+  .toggle{width:40px;height:24px;border-radius:12px;background:var(--green);position:relative;flex:0 0 auto;}
+  .toggle::after{content:"";position:absolute;top:4px;right:4px;width:16px;height:16px;border-radius:50%;background:var(--navy);}
+  .wordmark{font-family:var(--sans);font-weight:700;font-size:24px;letter-spacing:-.5px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:3px;color:var(--green);margin-bottom:6px;}
+  .hero h1{font-family:var(--sans);font-weight:700;margin:0 0 6px;font-size:clamp(24px,5vw,32px);}
+  .hero .sub{margin:0;font-size:14.5px;color:rgba(255,255,255,.72);}
+  .hero a.back{color:var(--green);font-family:var(--mono);font-size:13px;text-decoration:none;}
+
+  .wrap{max-width:760px;margin:0 auto;padding:18px 16px 60px;}
+  .card{background:var(--white);border-radius:16px;padding:18px 20px;margin-bottom:14px;}
+  .card h2{font-family:var(--sans);font-weight:600;font-size:16.5px;color:var(--navy);margin:0 0 12px;display:flex;align-items:center;gap:10px;}
+  .num{font-family:var(--mono);font-weight:600;font-size:12px;color:var(--green-dark);border:1.5px solid var(--green);border-radius:7px;padding:2px 7px;}
+
+  label.f{display:block;font-family:var(--sans);font-weight:600;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;color:var(--navy);margin:14px 0 6px;}
+  label.f em{font-style:normal;font-weight:500;text-transform:none;color:var(--muted);}
+  input[type=text],input[type=password],select{
+    width:100%;font-family:var(--body);font-size:15.5px;color:var(--ink);
+    background:var(--white);border:1px solid var(--line);border-radius:11px;padding:11px 13px;appearance:none;
+  }
+  input.mono{font-family:var(--mono);}
+  input:focus,select:focus{outline:none;border-color:var(--green-dark);box-shadow:0 0 0 3px rgba(18,184,122,.15);}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.55;}
+  .row{display:flex;gap:10px;}
+  .row > *{flex:1;min-width:0;}
+
+  .btn{
+    font-family:var(--sans);font-weight:600;font-size:14.5px;border-radius:11px;
+    padding:11px 18px;cursor:pointer;border:1.5px solid transparent;transition:all .12s ease;
+  }
+  .btn-primary{background:var(--green-dark);color:#fff;}
+  .btn-primary:hover{background:#0FA36C;}
+  .btn-primary:disabled{background:#A8AEBE;cursor:not-allowed;}
+  .btn-ghost{background:#F4F4F2;color:var(--ink);border-color:#E7E7E4;}
+  .btn-ghost:hover{border-color:var(--green);}
+  .btn-danger{background:var(--red-soft);color:var(--red);border-color:#F5C6C6;}
+  .btn-danger:hover{background:#FDDCDC;}
+  .btn-sm{font-size:13px;padding:7px 12px;border-radius:9px;}
+  .btn-xs{font-size:12px;padding:4px 10px;border-radius:8px;font-weight:500;}
+
+  .hidden{display:none !important;}
+
+  /* status do token */
+  .tokenline{display:flex;gap:10px;align-items:center;}
+  .tokenline input{flex:1;}
+  .pill{
+    display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12.5px;
+    border-radius:999px;padding:6px 13px;
+  }
+  .pill.ok{background:var(--green-soft);color:var(--green-dark);}
+  .pill.ro{background:#FFF7E8;color:#7A5B12;}
+  details.help{margin-top:12px;font-size:13.5px;color:var(--muted);}
+  details.help summary{cursor:pointer;color:var(--green-dark);font-weight:600;font-size:13px;}
+  details.help ol{padding-left:20px;margin:8px 0;}
+  details.help li{margin-bottom:5px;line-height:1.5;}
+  details.help code{font-family:var(--mono);font-size:12px;background:#F4F4F2;padding:1px 6px;border-radius:5px;color:var(--navy);}
+
+  /* lista */
+  .listhead{display:flex;gap:10px;align-items:center;margin-bottom:12px;}
+  .listhead input{flex:1;}
+  .citem{
+    display:flex;align-items:center;gap:12px;justify-content:space-between;
+    border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;
+  }
+  .citem .ci-nome{font-family:var(--sans);font-weight:600;font-size:15px;color:var(--navy);}
+  .citem .ci-meta{font-size:12.5px;color:var(--muted);font-family:var(--mono);}
+  .citem .ci-actions{display:flex;gap:6px;flex:0 0 auto;}
+
+  /* editor */
+  .oferta-box{border:1.5px solid var(--line);border-radius:13px;padding:14px 16px;margin-top:14px;}
+  .oferta-box .ohead{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .oferta-box .ohead .ottl{font-family:var(--mono);font-size:12px;letter-spacing:1px;color:var(--green-dark);font-weight:600;}
+  .taxa-box{border:1px dashed #D8D9D4;border-radius:11px;padding:12px 14px;margin-top:12px;background:#FBFBFA;}
+  .taxa-box .thead{display:flex;align-items:center;gap:10px;justify-content:space-between;margin-bottom:8px;}
+  .taxa-box .thead .tlbl{font-family:var(--sans);font-weight:600;font-size:13px;color:var(--navy);white-space:nowrap;}
+  .taxa-box .thead input{width:110px;font-family:var(--mono);text-align:right;}
+  table.mult{width:100%;border-collapse:collapse;margin-top:6px;}
+  table.mult th{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:1px;color:var(--muted);
+    text-align:left;padding:4px 6px;font-weight:500;
+  }
+  table.mult td{padding:3px 4px;}
+  table.mult input{padding:8px 10px;font-family:var(--mono);font-size:14px;border-radius:9px;}
+  .xbtn{
+    background:none;border:none;color:#B9BCC4;font-size:17px;cursor:pointer;padding:4px 8px;line-height:1;
+  }
+  .xbtn:hover{color:var(--red);}
+  .addline{margin-top:10px;}
+  .editor-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+  .editor-actions .spacer{flex:1;}
+
+  /* toast */
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    background:var(--navy);color:#fff;font-size:14px;padding:13px 22px;border-radius:12px;
+    opacity:0;pointer-events:none;transition:all .25s ease;z-index:50;max-width:90vw;text-align:center;
+    border:1px solid rgba(255,255,255,.15);
+  }
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  #toast.err{background:#5B1212;border-color:#8a2f2f;}
+
+  .warnbar{
+    background:#FFF7E8;border:1px solid #F3D48A;border-radius:11px;
+    padding:11px 13px;font-size:13.5px;color:#7A5B12;margin-bottom:14px;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="logo">
+      <div class="toggle" aria-hidden="true"></div>
+      <span class="wordmark">kard</span>
+    </div>
+    <div class="eyebrow">ADMIN</div>
+    <h1>Gerenciar convênios</h1>
+    <p class="sub">Adicione ou edite convênios do simulador. Ao salvar, a alteração é publicada no site em ~1 minuto. &nbsp;<a class="back" href="index.html">← voltar ao simulador</a></p>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- Acesso -->
+  <section class="card" id="accessCard">
+    <h2><span class="num">🔑</span>Acesso</h2>
+    <div id="tokenStatus"></div>
+    <div class="tokenline" id="tokenForm">
+      <input type="password" class="mono" id="tokenInput" placeholder="Token do GitHub (github_pat_…)" autocomplete="off">
+      <button class="btn btn-primary btn-sm" id="btnToken">Conectar</button>
+    </div>
+    <details class="help">
+      <summary>Como gerar o token (uma vez só)</summary>
+      <ol>
+        <li>Acesse <code>github.com/settings/personal-access-tokens/new</code> (logado como dono do repositório ou colaborador)</li>
+        <li><b>Token name:</b> <code>simulador-admin</code> · <b>Expiration:</b> 1 ano (ou o que preferir)</li>
+        <li><b>Repository access:</b> Only select repositories → <code>simulador-kard</code></li>
+        <li><b>Permissions → Repository permissions → Contents:</b> <code>Read and write</code></li>
+        <li>Generate token e cole aqui. O token fica salvo <b>somente neste navegador</b>.</li>
+      </ol>
+      <p>Sem token, a página funciona em modo somente leitura. Cada pessoa que for editar precisa do seu próprio token (ou ser colaborador do repositório com um token próprio).</p>
+    </details>
+  </section>
+
+  <!-- Lista -->
+  <section class="card" id="listCard">
+    <h2><span class="num" id="countBadge">…</span>Convênios</h2>
+    <div id="roWarn" class="warnbar hidden">Modo somente leitura — conecte um token para salvar alterações.</div>
+    <div class="listhead">
+      <input type="text" id="search" placeholder="Buscar convênio…">
+      <button class="btn btn-primary btn-sm" id="btnNovo">＋ Novo</button>
+    </div>
+    <div id="lista"></div>
+  </section>
+
+  <!-- Editor -->
+  <section class="card hidden" id="editorCard">
+    <h2><span class="num">✎</span><span id="editorTitle">Editar convênio</span></h2>
+
+    <div class="row">
+      <div style="flex:3">
+        <label class="f">Nome do convênio</label>
+        <input type="text" id="eNome" placeholder="Ex: Prefeitura de Fortaleza">
+      </div>
+      <div style="flex:1">
+        <label class="f">UF</label>
+        <input type="text" id="eUf" class="mono" placeholder="CE" maxlength="2" style="text-transform:uppercase">
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label class="f">Categoria</label>
+        <select id="eCategoria">
+          <option>Prefeitura Municipal</option>
+          <option>Governo Estadual</option>
+          <option>Instituto de Previdência</option>
+          <option>Tribunal / Judiciário</option>
+        </select>
+      </div>
+      <div>
+        <label class="f">Vigência <em>(dd.mm.aaaa)</em></label>
+        <input type="text" id="eVigencia" class="mono" placeholder="20.05.2026">
+      </div>
+    </div>
+
+    <div id="ofertasBox"></div>
+    <div class="addline">
+      <button class="btn btn-ghost btn-sm" id="btnAddOferta">＋ Adicionar público-alvo / oferta</button>
+    </div>
+
+    <div class="editor-actions">
+      <button class="btn btn-primary" id="btnSalvar">Salvar e publicar</button>
+      <button class="btn btn-ghost" id="btnCancelar">Cancelar</button>
+      <span class="spacer"></span>
+      <button class="btn btn-danger hidden" id="btnExcluir">Excluir convênio</button>
+    </div>
+    <p class="hint" id="saveHint"></p>
+  </section>
+
+</main>
+
+<div id="toast"></div>
+
+<script>
+/* ============================ CONFIG ============================ */
+const REPO = 'MohamadKDB/simulador-kard';
+const FILE = 'convenios.json';
+const BRANCH = 'main';
+const API = `https://api.github.com/repos/${REPO}/contents/${FILE}`;
+
+/* ============================ ESTADO ============================ */
+let token = localStorage.getItem('kard_admin_token') || '';
+let data = [];        // array de convênios
+let sha = null;       // sha do arquivo no GitHub (necessário pro commit)
+let readOnly = true;
+let editIdx = -1;     // -1 = novo
+let draft = null;     // convênio em edição
+
+const $ = id => document.getElementById(id);
+const num2 = new Intl.NumberFormat('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+/* ============================ HELPERS ============================ */
+function toast(msg, err){
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = err ? 'show err' : 'show';
+  clearTimeout(t._h);
+  t._h = setTimeout(()=>{ t.className=''; }, err?5000:3200);
+}
+function parseDec(str){
+  if(str==null || str==='') return null;
+  const v = parseFloat(String(str).replace(/\./g,'').replace(',', '.'));
+  return isNaN(v) ? null : v;
+}
+function fmtDec(v){ return v==null ? '' : num2.format(v); }
+function slugify(s){
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function b64encodeUtf8(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = '';
+  for(let i=0;i<bytes.length;i+=0x8000){
+    bin += String.fromCharCode.apply(null, bytes.subarray(i,i+0x8000));
+  }
+  return btoa(bin);
+}
+function b64decodeUtf8(b64){
+  const bin = atob(b64.replace(/\s/g,''));
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function esc(s){ const d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
+
+/* ============================ CARREGAR ============================ */
+async function load(){
+  if(token){
+    try{
+      const r = await fetch(`${API}?ref=${BRANCH}&t=${Date.now()}`, {
+        headers:{ 'Authorization':`Bearer ${token}`, 'Accept':'application/vnd.github+json' }
+      });
+      if(r.status===401 || r.status===403){
+        toast('Token inválido ou sem permissão neste repositório.', true);
+        setReadOnly(true);
+      } else if(r.ok){
+        const j = await r.json();
+        sha = j.sha;
+        data = JSON.parse(b64decodeUtf8(j.content));
+        setReadOnly(false);
+        renderTokenStatus();
+        renderList();
+        return;
+      } else {
+        toast(`Erro ${r.status} ao carregar do GitHub.`, true);
+      }
+    }catch(e){
+      toast('Falha de rede ao acessar o GitHub.', true);
+    }
+  }
+  // fallback: leitura local (somente leitura)
+  try{
+    const r = await fetch(`${FILE}?v=${Date.now()}`, {cache:'no-store'});
+    if(r.ok) data = await r.json();
+  }catch(e){ data = []; }
+  setReadOnly(true);
+  renderTokenStatus();
+  renderList();
+}
+
+function setReadOnly(ro){
+  readOnly = ro;
+  $('roWarn').classList.toggle('hidden', !ro);
+  $('btnNovo').disabled = false; // pode abrir o editor, só não salva
+}
+
+function renderTokenStatus(){
+  const st = $('tokenStatus');
+  if(token && !readOnly){
+    st.innerHTML = '<span class="pill ok">● conectado — pode salvar</span>&nbsp; <button class="btn btn-ghost btn-xs" onclick="logout()">desconectar</button>';
+    $('tokenForm').classList.add('hidden');
+  } else {
+    st.innerHTML = token ? '<span class="pill ro">token salvo, mas sem acesso — verifique e reconecte</span>' : '';
+    $('tokenForm').classList.remove('hidden');
+  }
+}
+function logout(){
+  token=''; localStorage.removeItem('kard_admin_token');
+  sha=null; load();
+}
+
+/* ============================ LISTA ============================ */
+function renderList(){
+  $('countBadge').textContent = data.length;
+  const q = slugify($('search').value||'');
+  const box = $('lista');
+  box.innerHTML = '';
+  data.forEach((c,i)=>{
+    if(q && !slugify(`${c.nome} ${c.uf} ${c.categoria}`).includes(q)) return;
+    const nTaxas = c.ofertas.reduce((s,o)=>s+o.taxas.length,0);
+    const div = document.createElement('div');
+    div.className = 'citem';
+    div.innerHTML =
+      `<div><div class="ci-nome">${esc(c.nome)} · ${esc(c.uf)}</div>`+
+      `<div class="ci-meta">${esc(c.categoria)} · vig. ${esc(c.vigencia)} · ${c.ofertas.length} oferta(s), ${nTaxas} taxa(s)</div></div>`+
+      `<div class="ci-actions"><button class="btn btn-ghost btn-sm" data-i="${i}">Editar</button></div>`;
+    div.querySelector('button').onclick = ()=> openEditor(i);
+    box.appendChild(div);
+  });
+  if(!box.children.length){
+    box.innerHTML = '<p class="hint">Nenhum convênio encontrado.</p>';
+  }
+}
+
+/* ============================ EDITOR ============================ */
+function blankTaxa(){ return {taxa:null, mult:[{prazo:null, coef:null}]}; }
+function blankOferta(){
+  return {rotulo:'', comprometimento:'', parcelaMin:30, taxas:[blankTaxa()]};
+}
+
+/* converte convênio (formato json) -> draft editável (mult como lista ordenada) */
+function toDraft(c){
+  return {
+    id: c.id,
+    nome: c.nome, uf: c.uf, categoria: c.categoria, vigencia: c.vigencia,
+    ofertas: c.ofertas.map(o=>({
+      rotulo: o.rotulo,
+      comprometimento: o.comprometimento,
+      parcelaMin: o.parcelaMin,
+      taxas: o.taxas.map(t=>({
+        taxa: t.taxa,
+        mult: Object.keys(t.mult).map(Number).sort((a,b)=>a-b)
+              .map(p=>({prazo:p, coef:t.mult[String(p)]}))
+      }))
+    }))
+  };
+}
+
+function openEditor(i){
+  editIdx = i;
+  draft = i>=0 ? toDraft(data[i]) : {
+    id:null, nome:'', uf:'', categoria:'Prefeitura Municipal', vigencia:'',
+    ofertas:[Object.assign(blankOferta(), {rotulo:'Efetivos'})]
+  };
+  $('editorTitle').textContent = i>=0 ? `Editar — ${data[i].nome}` : 'Novo convênio';
+  $('eNome').value = draft.nome;
+  $('eUf').value = draft.uf;
+  $('eCategoria').value = draft.categoria;
+  $('eVigencia').value = draft.vigencia;
+  $('btnExcluir').classList.toggle('hidden', i<0);
+  $('saveHint').textContent = readOnly ? 'Modo somente leitura — conecte um token para salvar.' : '';
+  renderOfertas();
+  $('listCard').classList.add('hidden');
+  $('editorCard').classList.remove('hidden');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function closeEditor(){
+  $('editorCard').classList.add('hidden');
+  $('listCard').classList.remove('hidden');
+  draft = null; editIdx = -1;
+}
+
+function renderOfertas(){
+  const box = $('ofertasBox');
+  box.innerHTML = '';
+  draft.ofertas.forEach((of, oi)=>{
+    const el = document.createElement('div');
+    el.className = 'oferta-box';
+    el.innerHTML = `
+      <div class="ohead">
+        <span class="ottl">OFERTA ${String(oi+1).padStart(2,'0')}</span>
+        ${draft.ofertas.length>1 ? `<button class="btn btn-danger btn-xs" data-act="rmOferta">remover oferta</button>` : ''}
+      </div>
+      <label class="f">Público-alvo <em>(rótulo)</em></label>
+      <input type="text" data-f="rotulo" value="${esc(of.rotulo)}" placeholder="Ex: Efetivos · Aposentados · Pensionistas">
+      <div class="row">
+        <div>
+          <label class="f">Comprometimento</label>
+          <input type="text" data-f="comprometimento" value="${esc(of.comprometimento)}" placeholder="Ex: 5% RCC + 5% RMC">
+        </div>
+        <div>
+          <label class="f">Parcela mínima <em>(R$)</em></label>
+          <input type="text" class="mono" data-f="parcelaMin" value="${esc(fmtDec(of.parcelaMin))}" placeholder="30,00">
+        </div>
+      </div>
+      <div data-taxas></div>
+      <div class="addline"><button class="btn btn-ghost btn-xs" data-act="addTaxa">＋ adicionar taxa</button></div>
+    `;
+    // binds de campos simples
+    el.querySelectorAll('input[data-f]').forEach(inp=>{
+      inp.oninput = ()=>{
+        const f = inp.dataset.f;
+        of[f] = (f==='parcelaMin') ? parseDec(inp.value) : inp.value;
+      };
+    });
+    el.querySelector('[data-act="addTaxa"]').onclick = ()=>{ of.taxas.push(blankTaxa()); renderOfertas(); };
+    const rm = el.querySelector('[data-act="rmOferta"]');
+    if(rm) rm.onclick = ()=>{ if(confirm('Remover esta oferta?')){ draft.ofertas.splice(oi,1); renderOfertas(); } };
+
+    const taxasBox = el.querySelector('[data-taxas]');
+    of.taxas.forEach((tx, ti)=>{
+      taxasBox.appendChild(renderTaxa(of, tx, ti));
+    });
+    box.appendChild(el);
+  });
+}
+
+function renderTaxa(of, tx, ti){
+  const el = document.createElement('div');
+  el.className = 'taxa-box';
+  el.innerHTML = `
+    <div class="thead">
+      <span class="tlbl">Taxa (% a.m.)</span>
+      <input type="text" value="${esc(fmtDec(tx.taxa))}" placeholder="3,99" data-taxa>
+      <span style="flex:1"></span>
+      ${of.taxas.length>1 ? '<button class="xbtn" data-act="rmTaxa" title="remover taxa">✕</button>' : ''}
+    </div>
+    <table class="mult">
+      <thead><tr><th>PRAZO (MESES)</th><th>COEFICIENTE</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="addline"><button class="btn btn-ghost btn-xs" data-act="addRow">＋ prazo</button></div>
+  `;
+  el.querySelector('[data-taxa]').oninput = e=>{ tx.taxa = parseDec(e.target.value); };
+  const rm = el.querySelector('[data-act="rmTaxa"]');
+  if(rm) rm.onclick = ()=>{ if(confirm('Remover esta taxa e seus coeficientes?')){ of.taxas.splice(ti,1); renderOfertas(); } };
+  el.querySelector('[data-act="addRow"]').onclick = ()=>{ tx.mult.push({prazo:null, coef:null}); renderOfertas(); };
+
+  const tbody = el.querySelector('tbody');
+  tx.mult.forEach((row, ri)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><input type="text" inputmode="numeric" value="${row.prazo??''}" placeholder="96" data-p></td>
+      <td><input type="text" inputmode="decimal" value="${esc(row.coef!=null?num2.format(row.coef):'')}" placeholder="22,74" data-c></td>
+      <td>${tx.mult.length>1 ? '<button class="xbtn" title="remover linha">✕</button>' : ''}</td>
+    `;
+    tr.querySelector('[data-p]').oninput = e=>{ const d=e.target.value.replace(/\D/g,''); e.target.value=d; row.prazo = d?Number(d):null; };
+    tr.querySelector('[data-c]').oninput = e=>{ row.coef = parseDec(e.target.value); };
+    const x = tr.querySelector('.xbtn');
+    if(x) x.onclick = ()=>{ tx.mult.splice(ri,1); renderOfertas(); };
+    tbody.appendChild(tr);
+  });
+  return el;
+}
+
+/* ============================ VALIDAR / SALVAR ============================ */
+function validate(){
+  draft.nome = $('eNome').value.trim();
+  draft.uf = $('eUf').value.trim().toUpperCase();
+  draft.categoria = $('eCategoria').value;
+  draft.vigencia = $('eVigencia').value.trim();
+
+  if(!draft.nome) return 'Informe o nome do convênio.';
+  if(!/^[A-Z]{2}$/.test(draft.uf)) return 'UF deve ter 2 letras (ex: SP).';
+  if(!/^\d{2}\.\d{2}\.\d{4}$/.test(draft.vigencia)) return 'Vigência deve estar no formato dd.mm.aaaa.';
+  if(!draft.ofertas.length) return 'Inclua ao menos uma oferta.';
+
+  for(const [oi,of] of draft.ofertas.entries()){
+    const n = oi+1;
+    if(!of.rotulo.trim()) return `Oferta ${n}: informe o público-alvo.`;
+    if(!of.comprometimento.trim()) return `Oferta ${n}: informe o comprometimento.`;
+    if(of.parcelaMin==null || of.parcelaMin<=0) return `Oferta ${n}: parcela mínima inválida.`;
+    if(!of.taxas.length) return `Oferta ${n}: inclua ao menos uma taxa.`;
+    for(const [ti,tx] of of.taxas.entries()){
+      if(tx.taxa==null || tx.taxa<=0) return `Oferta ${n}, taxa ${ti+1}: informe a taxa % a.m.`;
+      const rows = tx.mult.filter(r=>r.prazo!=null || r.coef!=null);
+      if(!rows.length) return `Oferta ${n}, taxa ${ti+1}: inclua ao menos um prazo/coeficiente.`;
+      const seen = new Set();
+      for(const r of rows){
+        if(r.prazo==null || r.prazo<=0) return `Oferta ${n}, taxa ${ti+1}: prazo inválido.`;
+        if(r.coef==null || r.coef<=0) return `Oferta ${n}, taxa ${ti+1}: coeficiente inválido no prazo ${r.prazo}.`;
+        if(seen.has(r.prazo)) return `Oferta ${n}, taxa ${ti+1}: prazo ${r.prazo} duplicado.`;
+        seen.add(r.prazo);
+      }
+      tx.mult = rows;
+    }
+  }
+  return null;
+}
+
+/* draft -> formato do json publicado */
+function fromDraft(){
+  const prazosDe = of => of.taxas.flatMap(t=>t.mult.map(r=>r.prazo));
+  return {
+    id: draft.id || uniqueId(slugify(draft.nome)),
+    nome: draft.nome, categoria: draft.categoria, uf: draft.uf, vigencia: draft.vigencia,
+    ofertas: draft.ofertas.map(of=>({
+      rotulo: of.rotulo.trim(),
+      comprometimento: of.comprometimento.trim(),
+      prazoMin: Math.min(...prazosDe(of)),
+      prazoMax: Math.max(...prazosDe(of)),
+      parcelaMin: of.parcelaMin,
+      taxas: of.taxas
+        .slice().sort((a,b)=>a.taxa-b.taxa)
+        .map(t=>{
+          const mult = {};
+          t.mult.slice().sort((a,b)=>a.prazo-b.prazo).forEach(r=>{ mult[String(r.prazo)] = r.coef; });
+          return {taxa: t.taxa, mult};
+        })
+    }))
+  };
+}
+function uniqueId(base){
+  let id = base || 'convenio', n = 2;
+  const ids = new Set(data.map(c=>c.id));
+  while(ids.has(id)) id = `${base}-${n++}`;
+  return id;
+}
+
+async function commit(newData, message){
+  const body = {
+    message: `admin: ${message}`,
+    content: b64encodeUtf8(JSON.stringify(newData, null, 2) + '\n'),
+    branch: BRANCH
+  };
+  if(sha) body.sha = sha;
+  const r = await fetch(API, {
+    method:'PUT',
+    headers:{ 'Authorization':`Bearer ${token}`, 'Accept':'application/vnd.github+json' },
+    body: JSON.stringify(body)
+  });
+  if(r.status===409){
+    throw new Error('Conflito: o arquivo mudou desde que você carregou (outra pessoa salvou?). Recarregue a página e refaça.');
+  }
+  if(r.status===401 || r.status===403){
+    throw new Error('Token sem permissão de escrita. Verifique o token (Contents: Read and write).');
+  }
+  if(!r.ok){
+    let msg = `Erro ${r.status} ao salvar.`;
+    try{ msg += ' ' + (await r.json()).message; }catch(e){}
+    throw new Error(msg);
+  }
+  const j = await r.json();
+  sha = j.content.sha;
+  data = newData;
+}
+
+async function salvar(){
+  if(readOnly){ toast('Conecte um token para salvar.', true); return; }
+  const err = validate();
+  if(err){ toast(err, true); return; }
+  const conv = fromDraft();
+  const newData = data.slice();
+  if(editIdx>=0) newData[editIdx] = conv; else newData.push(conv);
+
+  const btn = $('btnSalvar');
+  btn.disabled = true; btn.textContent = 'Publicando…';
+  try{
+    await commit(newData, `${editIdx>=0?'atualiza':'adiciona'} convênio ${conv.nome}`);
+    toast(`✓ ${conv.nome} publicado! O site atualiza em ~1 minuto.`);
+    closeEditor();
+    renderList();
+  }catch(e){
+    toast(e.message, true);
+  }finally{
+    btn.disabled = false; btn.textContent = 'Salvar e publicar';
+  }
+}
+
+async function excluir(){
+  if(readOnly){ toast('Conecte um token para salvar.', true); return; }
+  const nome = data[editIdx].nome;
+  if(!confirm(`Excluir o convênio "${nome}"? Essa ação será publicada no site.`)) return;
+  const newData = data.slice();
+  newData.splice(editIdx,1);
+  const btn = $('btnExcluir');
+  btn.disabled = true;
+  try{
+    await commit(newData, `remove convênio ${nome}`);
+    toast(`✓ ${nome} excluído.`);
+    closeEditor();
+    renderList();
+  }catch(e){
+    toast(e.message, true);
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+/* ============================ EVENTOS ============================ */
+$('btnToken').onclick = ()=>{
+  const t = $('tokenInput').value.trim();
+  if(!t){ toast('Cole o token primeiro.', true); return; }
+  token = t;
+  localStorage.setItem('kard_admin_token', t);
+  $('tokenInput').value='';
+  load();
+};
+$('search').addEventListener('input', renderList);
+$('btnNovo').onclick = ()=> openEditor(-1);
+$('btnAddOferta').onclick = ()=>{ draft.ofertas.push(blankOferta()); renderOfertas(); };
+$('btnSalvar').onclick = salvar;
+$('btnCancelar').onclick = ()=>{ if(confirm('Descartar alterações?')) closeEditor(); };
+$('btnExcluir').onclick = excluir;
+
+load();
+</script>
+</body>
+</html>
