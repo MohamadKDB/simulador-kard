@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#151A3D">
+<title>Simulador de Coeficientes — Kard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap');
+
+  :root{
+    --navy:#151A3D;
+    --page:#0E1122;
+    --green:#34D399;
+    --green-dark:#12B87A;
+    --green-soft:#E9F9F0;
+    --white:#FFFFFF;
+    --off-white:#F2F1EC;
+    --ink:#1E2233;
+    --muted:#6B7280;
+    --line:#E3E4E0;
+    --radius:16px;
+    --sans:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--page);
+    color:var(--ink);
+    font-family:var(--body);
+    font-size:16px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    background:var(--navy);
+    color:var(--white);
+    padding:26px 22px 34px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-inner{max-width:640px;margin:0 auto;position:relative;z-index:1;}
+  .circ{
+    position:absolute;border:1px solid rgba(255,255,255,.07);border-radius:50%;
+    pointer-events:none;
+  }
+  .c1{width:280px;height:280px;top:-120px;right:-70px;}
+  .c2{width:170px;height:170px;top:30px;right:-90px;border-color:rgba(255,255,255,.05);}
+
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+  .toggle{
+    width:40px;height:24px;border-radius:12px;background:var(--green);
+    position:relative;flex:0 0 auto;
+  }
+  .toggle::after{
+    content:"";position:absolute;top:4px;right:4px;
+    width:16px;height:16px;border-radius:50%;background:var(--navy);
+  }
+  .wordmark{font-family:var(--sans);font-weight:700;font-size:24px;letter-spacing:-.5px;color:var(--white);}
+
+  .eyebrow{
+    font-family:var(--mono);font-weight:500;font-size:12px;
+    letter-spacing:3px;color:var(--green);margin-bottom:8px;
+  }
+  .hero h1{
+    font-family:var(--sans);font-weight:700;margin:0 0 10px;
+    font-size:clamp(28px,6vw,38px);line-height:1.15;letter-spacing:-.5px;
+  }
+  .hero .sub{
+    margin:0 0 20px;font-size:15px;color:rgba(255,255,255,.75);max-width:460px;
+  }
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--mono);font-size:13px;color:#E8E9F0;
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);
+    border-radius:999px;padding:9px 16px;
+  }
+  .badge .dot{color:var(--green);font-size:11px;}
+
+  /* ---------- Layout ---------- */
+  .wrap{max-width:640px;margin:0 auto;padding:18px 16px 8px;}
+
+  .card{
+    background:var(--white);border-radius:var(--radius);
+    padding:18px 20px;margin-bottom:14px;
+  }
+
+  .step{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+  .num{
+    font-family:var(--mono);font-weight:600;font-size:12px;color:var(--green-dark);
+    border:1.5px solid var(--green);border-radius:7px;padding:2px 7px;line-height:1.4;
+  }
+  .ttl{font-family:var(--sans);font-weight:600;font-size:16.5px;color:var(--navy);}
+  .ttl em{font-style:normal;font-weight:500;color:var(--muted);}
+
+  .desc{font-size:13.5px;color:var(--muted);margin:-6px 0 14px;line-height:1.55;}
+
+  /* selects & inputs */
+  select,input[type=text]{
+    width:100%;font-family:var(--body);font-size:16px;color:var(--ink);
+    background:var(--white);border:1px solid var(--line);border-radius:12px;
+    padding:13px 14px;appearance:none;
+  }
+  select:focus,input:focus{outline:none;border-color:var(--green-dark);box-shadow:0 0 0 3px rgba(18,184,122,.15);}
+  .select-wrap{position:relative;}
+  .select-wrap::after{
+    content:"";position:absolute;right:16px;top:50%;
+    width:9px;height:9px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);
+    transform:translateY(-60%) rotate(45deg);pointer-events:none;
+  }
+
+  .igroup{display:flex;}
+  .igroup .addon{
+    display:flex;align-items:center;font-family:var(--mono);font-size:15px;color:var(--muted);
+    background:#F4F4F2;border:1px solid var(--line);padding:0 14px;
+  }
+  .igroup .addon.pre{border-right:none;border-radius:12px 0 0 12px;}
+  .igroup .addon.suf{border-left:none;border-radius:0 12px 12px 0;}
+  .igroup input{flex:1;min-width:0;}
+  .igroup input.has-pre{border-radius:0 12px 12px 0;}
+  .igroup input.has-suf{border-radius:12px 0 0 12px;}
+  input.money{font-family:var(--mono);font-weight:500;font-size:17px;}
+  input#idade{font-family:var(--mono);font-size:17px;}
+  input::placeholder{color:#B9BCC4;font-family:var(--mono);}
+
+  /* meta lines under fields */
+  .meta{
+    display:flex;flex-wrap:wrap;gap:6px 22px;
+    font-size:13.5px;color:var(--muted);margin-top:12px;
+  }
+  .meta b{font-family:var(--mono);font-weight:600;color:var(--navy);}
+
+  /* ---------- Chips ---------- */
+  .chips{display:flex;flex-direction:column;align-items:flex-start;gap:10px;}
+  .chip{
+    font-family:var(--body);font-size:14.5px;color:var(--muted);
+    background:#F4F4F2;border:1.5px solid #E7E7E4;border-radius:11px;
+    padding:10px 16px;cursor:pointer;transition:all .12s ease;line-height:1.3;text-align:left;
+  }
+  .chip:hover{border-color:var(--green);}
+  .chip.active{
+    background:var(--green-soft);border-color:var(--green);
+    color:var(--green-dark);font-weight:600;
+  }
+
+  .hidden{display:none !important;}
+
+  /* ---------- Result ---------- */
+  .result{
+    background:var(--navy);color:var(--white);border-radius:18px;
+    padding:24px 22px;margin:20px 0 10px;
+  }
+  .result .cap{
+    font-family:var(--mono);font-weight:500;font-size:13px;
+    letter-spacing:2px;color:var(--green);
+  }
+  .result .big{
+    font-family:var(--mono);font-weight:700;font-size:38px;line-height:1.15;
+    margin:10px 0 4px;font-variant-numeric:tabular-nums;min-height:46px;
+    display:flex;align-items:center;
+  }
+  .result .dash{display:inline-block;width:46px;height:7px;border-radius:4px;background:#DFF6EC;}
+  .result .divider{border-top:1px solid rgba(255,255,255,.13);margin:16px 0 18px;}
+
+  .rgrid{display:grid;grid-template-columns:1fr 1fr;gap:20px 18px;}
+  .rcell .rlbl{
+    font-family:var(--mono);font-size:11px;letter-spacing:1.2px;
+    color:rgba(255,255,255,.55);margin-bottom:5px;
+  }
+  .rcell .rval{
+    font-family:var(--mono);font-weight:500;font-size:16px;color:var(--white);
+    font-variant-numeric:tabular-nums;word-break:break-word;
+  }
+  .rcell .rval.dim{color:rgba(255,255,255,.65);}
+
+  /* ---------- Warnings ---------- */
+  .warn{
+    display:flex;gap:10px;align-items:flex-start;
+    background:#FFF7E8;border:1px solid #F3D48A;border-radius:11px;
+    padding:11px 13px;font-size:13.5px;color:#7A5B12;margin-top:14px;
+  }
+  .warn.cap-applied{background:#EAF8F1;border-color:#9BE0C1;color:#0B6B45;}
+  .warn .ic{flex:0 0 auto;font-weight:700;}
+
+  footer{max-width:640px;margin:0 auto;padding:10px 16px 50px;}
+  .note{
+    font-size:12.5px;color:#8A8FA3;line-height:1.65;
+    border-top:1px solid rgba(255,255,255,.1);padding-top:18px;
+  }
+  .note .src{color:var(--green);}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="circ c1"></div>
+  <div class="circ c2"></div>
+  <div class="hero-inner">
+    <div class="logo">
+      <div class="toggle" aria-hidden="true"></div>
+      <span class="wordmark">kard</span>
+    </div>
+    <div class="eyebrow">CORRESPONDENTE BANCÁRIO</div>
+    <h1>Simulador de Coeficientes</h1>
+    <p class="sub">Cartão consignado — calcule o valor liberado a partir da margem apurada em cada convênio.</p>
+    <span class="badge"><span class="dot">◆</span><span id="badgeText">35 convênios · vigência 05–06/2026</span></span>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 01 Convênio -->
+  <section class="card">
+    <div class="step"><span class="num">01</span><span class="ttl">Convênio</span></div>
+    <div class="select-wrap">
+      <select id="convenio">
+        <option value="">Selecione o convênio…</option>
+      </select>
+    </div>
+    <div class="meta hidden" id="convMeta"></div>
+  </section>
+
+  <!-- 02 Público-alvo -->
+  <section class="card hidden" id="ofertaField">
+    <div class="step"><span class="num">02</span><span class="ttl">Público-alvo</span></div>
+    <div class="chips" id="ofertaChips"></div>
+  </section>
+
+  <!-- 03 Taxa -->
+  <section class="card hidden" id="taxaField">
+    <div class="step"><span class="num">03</span><span class="ttl">Taxa de juros</span></div>
+    <div class="chips" id="taxaChips"></div>
+  </section>
+
+  <!-- 04 Prazo -->
+  <section class="card hidden" id="prazoField">
+    <div class="step"><span class="num">04</span><span class="ttl">Prazo</span></div>
+    <div class="select-wrap">
+      <select id="prazo"></select>
+    </div>
+    <div class="meta" id="prazoMeta"></div>
+  </section>
+
+  <!-- 05 Margem -->
+  <section class="card">
+    <div class="step"><span class="num">05</span><span class="ttl">Margem mensal apurada</span></div>
+    <p class="desc">Valor retornado pela gestora de margem para este cartão (já considerando o comprometimento do convênio).</p>
+    <div class="igroup">
+      <span class="addon pre">R$</span>
+      <input type="text" inputmode="decimal" class="money has-pre" id="margem" placeholder="0,00" autocomplete="off">
+    </div>
+  </section>
+
+  <!-- 06 Idade -->
+  <section class="card">
+    <div class="step"><span class="num">06</span><span class="ttl">Idade do cliente <em>(opcional)</em></span></div>
+    <p class="desc">Usada para aplicar o teto de valor por faixa etária ao fim do contrato.</p>
+    <div class="igroup">
+      <input type="text" inputmode="numeric" class="has-suf" id="idade" placeholder="Ex: 45" autocomplete="off">
+      <span class="addon suf">anos</span>
+    </div>
+  </section>
+
+  <!-- Resultado -->
+  <section class="result" id="result">
+    <div class="cap">VALOR LIBERADO ESTIMADO</div>
+    <div class="big" id="valorFinal"><span class="dash"></span></div>
+    <div class="divider"></div>
+    <div class="rgrid">
+      <div class="rcell">
+        <div class="rlbl">MARGEM × COEFICIENTE</div>
+        <div class="rval dim" id="cellMxc">—</div>
+      </div>
+      <div class="rcell">
+        <div class="rlbl">PARCELA MENSAL</div>
+        <div class="rval dim" id="cellParcela">—</div>
+      </div>
+      <div class="rcell">
+        <div class="rlbl">PRAZO</div>
+        <div class="rval dim" id="cellPrazo">—</div>
+      </div>
+      <div class="rcell">
+        <div class="rlbl">TETO POR IDADE</div>
+        <div class="rval dim" id="cellTeto">informe a idade</div>
+      </div>
+    </div>
+    <div id="warnBox"></div>
+  </section>
+
+</main>
+
+<footer>
+  <p class="note">
+    <span class="src">Fonte:</span> Roteiros Operacionais Kard, vigência 05–06/2026 (pasta DRIVE CORBAN KARD). Faixas de valor por idade ao fim do contrato: 21–71 anos até R$ 100.000; 72–77 anos até R$ 35.000; 78–79 anos até R$ 14.000. Regra geral de comprometimento global: até 70% do contracheque. Este simulador cobre o produto Cartão (RCC/RMC/Adiantamento Salarial); roteiros de Empréstimo Consignado não estão incluídos.
+  </p>
+</footer>
+
+<script>
+/* ============================ DADOS ============================ */
+const CONVENIOS = [
+  {"id":"sapucaia-sul","nome":"Sapucaia do Sul","categoria":"Prefeitura Municipal","uf":"RS","vigencia":"02.06.2026",
+   "ofertas":[
+     {"rotulo":"Efetivos · Aposentados · Pensionistas","comprometimento":"5% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+      "taxas":[{"taxa":4.90,"mult":{"36":15.26,"48":16.71,"60":17.53,"72":17.99,"84":18.25,"96":18.39}}]},
+     {"rotulo":"Comissionados (mín. 2 anos)","comprometimento":"5% RMC","prazoMin":12,"prazoMax":24,"parcelaMin":30,
+      "taxas":[{"taxa":7.90,"mult":{"12":6.74,"18":8.40,"20":8.80,"24":9.45}}]}]},
+  {"id":"trt11-amazonas","nome":"TRT-11 Amazonas","categoria":"Tribunal / Judiciário","uf":"AM","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Inativos · Comissionados","comprometimento":"5% (RMC + RCC)","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.99,"mult":{"36":17.59,"48":19.72,"60":21.06,"72":21.84,"84":22.41,"96":22.74}}]}]},
+  {"id":"amprev","nome":"AMPREV","categoria":"Instituto de Previdência","uf":"AP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Aposentados · Pensionistas","comprometimento":"5% RCC + 5% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.60,"mult":{"36":18.48,"48":20.96,"60":22.59,"72":23.35,"84":24.35,"96":24.80}},
+              {"taxa":4.20,"mult":{"36":16.87,"48":18.80,"60":19.98,"72":20.70,"84":21.14,"96":21.41}}]}]},
+  {"id":"palmas","nome":"Palmas","categoria":"Prefeitura Municipal","uf":"TO","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"5%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":17.45,"48":19.57,"60":20.89,"72":21.72,"84":22.24,"96":22.54}}]}]},
+  {"id":"mossoro","nome":"Mossoró","categoria":"Prefeitura Municipal","uf":"RN","vigencia":"22.06.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"5% RMC + 20% RCC","prazoMin":24,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.10,"mult":{"48":22.97,"60":25.09,"72":26.55,"84":27.57,"96":28.28}},
+              {"taxa":3.99,"mult":{"24":13.64,"36":16.80,"48":18.73,"60":19.90,"72":20.62,"84":21.06,"96":21.32}},
+              {"taxa":4.20,"mult":{"36":17.34,"48":19.44,"60":20.76,"72":21.58,"84":22.09,"96":22.42}}]}]},
+  {"id":"serra-comissionados","nome":"Serra — Comissionados","categoria":"Prefeitura Municipal","uf":"ES","vigencia":"27.05.2026",
+   "ofertas":[{"rotulo":"Comissionados (mín. 2 anos)","comprometimento":"5% RCC + 5% RMC","prazoMin":12,"prazoMax":24,"parcelaMin":30,
+     "taxas":[{"taxa":5.50,"mult":{"12":7.83,"18":10.22,"20":10.86,"24":11.95}}]}]},
+  {"id":"tj-alagoas","nome":"TJ Alagoas","categoria":"Tribunal / Judiciário","uf":"AL","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Pensionistas","comprometimento":"5% (RMC + RCC)","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.99,"mult":{"36":17.59,"48":19.72,"60":21.06,"72":21.89,"84":22.41,"96":22.74}}]}]},
+  {"id":"gov-alagoas","nome":"Governo de Alagoas","categoria":"Governo Estadual","uf":"AL","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Aposentados · Pensionistas · Militares","comprometimento":"10%","prazoMin":24,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":2.99,"mult":{"24":12.45,"36":14.94,"48":16.32,"60":17.09,"72":17.52,"84":17.76,"96":17.90}},
+              {"taxa":3.50,"mult":{"24":13.94,"36":17.29,"48":19.39,"60":20.70,"72":21.52,"84":22.04,"96":22.36}},
+              {"taxa":3.99,"mult":{"36":18.75,"48":21.34,"60":23.05,"72":24.18,"84":24.93,"96":25.43}},
+              {"taxa":4.99,"mult":{"36":20.14,"48":23.31,"60":25.54,"72":27.11,"84":28.21,"96":28.98}}]}]},
+  {"id":"maceio","nome":"Maceió","categoria":"Prefeitura Municipal","uf":"AL","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários · Aposentados · Pensionistas","comprometimento":"15%","prazoMin":36,"prazoMax":84,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":15.20,"48":16.64,"60":17.46,"72":17.92,"84":18.17}}]},
+     {"rotulo":"Comissionados (mín. 2 anos)","comprometimento":"5% RCC + 5% RMC","prazoMin":12,"prazoMax":24,"parcelaMin":30,
+     "taxas":[{"taxa":5.50,"mult":{"12":7.75,"18":10.11,"20":10.74,"24":11.82}}]}]},
+  {"id":"cachoeirinha","nome":"Cachoeirinha","categoria":"Prefeitura Municipal","uf":"RS","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários","comprometimento":"5%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":15.44,"48":16.91,"60":17.74,"72":18.20,"84":18.47,"96":18.61}}]}]},
+  {"id":"caucaia","nome":"Caucaia","categoria":"Prefeitura Municipal","uf":"CE","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários","comprometimento":"20%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":15.20,"48":16.64,"60":17.46,"72":17.92,"84":18.17,"96":18.32}}]}]},
+  {"id":"joao-pessoa","nome":"João Pessoa","categoria":"Prefeitura Municipal","uf":"PB","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários · Aposentados/Pensionistas (IPM)","comprometimento":"15%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":15.14,"48":16.58,"60":17.39,"72":17.85,"84":18.10,"96":18.25}}]}]},
+  {"id":"itaquaquecetuba","nome":"Itaquaquecetuba","categoria":"Prefeitura Municipal","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"5% RCC + 5% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":16.35,"48":18.08,"60":19.10,"72":19.71,"84":20.06,"96":20.27}}]}]},
+  {"id":"itupeva","nome":"Itupeva","categoria":"Prefeitura Municipal","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"5% RCC + 5% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":16.33,"48":18.06,"60":19.08,"72":19.68,"84":20.03,"96":20.24}}]}]},
+  {"id":"aracruz","nome":"Aracruz","categoria":"Prefeitura Municipal","uf":"ES","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos (adm. 6m) · Estatutários","comprometimento":"10% RCC + 10% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":16.05,"48":17.75,"60":18.75,"72":19.34,"84":19.69,"96":19.90}}]}]},
+  {"id":"santana-parnaiba","nome":"Santana de Parnaíba","categoria":"Prefeitura Municipal","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"5% RCC + 5% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":16.26,"48":17.98,"60":18.99,"72":19.59,"84":19.94,"96":20.15}}]}]},
+  {"id":"juazeiro-norte","nome":"Juazeiro do Norte","categoria":"Prefeitura Municipal","uf":"CE","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários","comprometimento":"5%","prazoMin":36,"prazoMax":72,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":14.90,"48":16.32,"60":17.11,"72":17.56}}]}]},
+  {"id":"serra","nome":"Serra","categoria":"Prefeitura Municipal","uf":"ES","vigencia":"27.05.2026",
+   "ofertas":[{"rotulo":"Efetivos (mín. 6 meses no cargo)","comprometimento":"5% RCC + 5% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.99,"mult":{"36":17.50,"48":19.62,"60":20.95,"72":21.78,"84":22.30,"96":22.62}}]}]},
+  {"id":"aquiraz","nome":"Aquiraz","categoria":"Prefeitura Municipal","uf":"CE","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"10%","prazoMin":36,"prazoMax":60,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":15.10,"40":15.65,"48":16.54,"50":16.71,"60":17.35}}]}]},
+  {"id":"sorocaba","nome":"Sorocaba","categoria":"Prefeitura Municipal","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários","comprometimento":"20%","prazoMin":36,"prazoMax":72,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":14.96,"48":16.38,"60":17.18,"72":17.63}}]}]},
+  {"id":"luziania","nome":"Luziânia","categoria":"Prefeitura Municipal","uf":"GO","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários","comprometimento":"5%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":16.19,"48":17.91,"60":18.92,"72":19.51,"84":19.86,"96":20.07}}]}]},
+  {"id":"previjuno","nome":"PREVIJUNO","categoria":"Instituto de Previdência","uf":"CE","vigencia":"15.06.2026",
+   "ofertas":[{"rotulo":"Aposentados · Pensionistas","comprometimento":"5%","prazoMin":36,"prazoMax":72,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":14.92,"48":16.34,"60":17.14,"72":17.59}}]}]},
+  {"id":"planaltina","nome":"Planaltina","categoria":"Prefeitura Municipal","uf":"GO","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"10% (RMC + RCC)","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":16.23,"48":17.95,"60":18.97,"72":19.56,"84":19.91,"96":20.12}}]}]},
+  {"id":"gov-piaui","nome":"Governo do Piauí","categoria":"Governo Estadual","uf":"PI","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Aposentados · Pensionistas","comprometimento":"5%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":14.75,"48":16.15,"60":16.94,"72":17.38,"84":17.63,"96":17.77}}]}]},
+  {"id":"ipmo","nome":"IPMO — Osasco","categoria":"Instituto de Previdência","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Aposentados · Pensionistas","comprometimento":"5%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":16.34,"48":18.07,"60":19.08,"72":19.69,"84":20.04,"96":20.25}}]}]},
+  {"id":"ipam","nome":"IPAM — Porto Velho","categoria":"Instituto de Previdência","uf":"RO","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Aposentados · Pensionistas","comprometimento":"10%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":15.15,"48":16.59,"60":17.40,"72":17.86,"84":18.12,"96":18.26}}]}]},
+  {"id":"cabedelo","nome":"Cabedelo","categoria":"Prefeitura Municipal","uf":"PB","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"10%","prazoMin":36,"prazoMax":60,"parcelaMin":30,
+     "taxas":[{"taxa":4.90,"mult":{"36":14.98,"40":15.55,"48":16.41,"50":16.58,"60":17.21}}]}]},
+  {"id":"braganca-paulista","nome":"Bragança Paulista","categoria":"Prefeitura Municipal","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários · Efetivos em comissão","comprometimento":"5%","prazoMin":36,"prazoMax":72,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":15.32,"48":16.78,"60":17.60,"72":18.06}}]}]},
+  {"id":"sao-jose-campos","nome":"São José dos Campos","categoria":"Prefeitura Municipal","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos","comprometimento":"5%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":16.19,"48":16.86,"60":17.68,"72":18.15,"84":18.41,"96":18.56}}]}]},
+  {"id":"belo-horizonte","nome":"Belo Horizonte","categoria":"Prefeitura Municipal","uf":"MG","vigencia":"03.06.2026",
+   "ofertas":[{"rotulo":"Efetivos · Aposentados · Pensionistas · Comissionados","comprometimento":"5%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.05,"mult":{"36":17.32,"48":19.42,"60":20.73,"72":21.55,"84":22.07,"96":22.39}},
+              {"taxa":3.50,"mult":{"36":18.68,"48":21.26,"60":22.97,"72":24.10,"84":24.85,"96":25.35}},
+              {"taxa":3.99,"mult":{"36":20.08,"48":23.20,"60":25.37,"72":26.89,"84":27.94,"96":28.68}}]}]},
+  {"id":"sao-paulo","nome":"São Paulo","categoria":"Prefeitura Municipal","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários · Aposentados/Pensionistas (IPREM)","comprometimento":"10%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.99,"mult":{"36":17.29,"48":19.39,"60":20.70,"72":21.52,"84":22.04,"96":22.36}}]}]},
+  {"id":"porto-alegre","nome":"Porto Alegre","categoria":"Prefeitura Municipal","uf":"RS","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Aposentados · Pensionistas","comprometimento":"5% RCC + 5% RMC","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.99,"mult":{"36":15.89,"48":17.57,"60":18.56,"72":19.14,"84":19.49,"96":19.69}}]}]},
+  {"id":"gov-ceara","nome":"Governo do Ceará","categoria":"Governo Estadual","uf":"CE","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Aposentados · Pensionistas · Militares","comprometimento":"5%","prazoMin":24,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.50,"mult":{"24":14.11,"36":17.50,"48":19.62,"60":20.95,"72":21.78,"84":22.30,"96":22.62}},
+              {"taxa":3.99,"mult":{"36":18.82,"48":21.42,"60":23.14,"72":24.28,"84":25.03,"96":25.53}}]}]},
+  {"id":"gov-sao-paulo","nome":"Governo de São Paulo","categoria":"Governo Estadual","uf":"SP","vigencia":"27.05.2026",
+   "ofertas":[{"rotulo":"Efetivos SEFAZ · Aposentados/Pensionistas SPPREV · PM","comprometimento":"15%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":3.99,"mult":{"36":17.59,"48":19.72,"60":21.06,"72":21.89,"84":22.41,"96":22.74}}]}]},
+  {"id":"cajamar","nome":"Cajamar","categoria":"Prefeitura Municipal","uf":"SP","vigencia":"20.05.2026",
+   "ofertas":[{"rotulo":"Efetivos · Estatutários","comprometimento":"10%","prazoMin":36,"prazoMax":96,"parcelaMin":30,
+     "taxas":[{"taxa":4.50,"mult":{"36":15.32,"48":16.78,"60":17.60,"72":18.06,"84":18.32,"96":18.74}}]}]}
+];
+
+const FAIXAS_IDADE = [
+  {min:21,max:71,valorMax:100000},
+  {min:72,max:77,valorMax:35000},
+  {min:78,max:79,valorMax:14000}
+];
+
+const ORDEM_CATEGORIAS = ["Prefeitura Municipal","Governo Estadual","Instituto de Previdência","Tribunal / Judiciário"];
+
+/* ============================ ESTADO ============================ */
+const state = {conv:null, ofertaIdx:0, taxaIdx:0, prazo:null, margem:null, idade:null};
+
+/* ============================ HELPERS ============================ */
+const $ = id => document.getElementById(id);
+
+const brl = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'});
+const num2 = new Intl.NumberFormat('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function parseMoney(str){
+  if(!str) return null;
+  const clean = String(str).replace(/[^\d.,]/g,'').replace(/\./g,'').replace(',', '.');
+  const v = parseFloat(clean);
+  return isNaN(v) ? null : v;
+}
+function fmtCoef(m){ return num2.format(m)+'x'; }
+function fmtTaxa(t){ return num2.format(t)+'%'; }
+
+function tetoPorFaixa(idadeFinal){
+  for(const f of FAIXAS_IDADE){ if(idadeFinal>=f.min && idadeFinal<=f.max) return f.valorMax; }
+  return null; // fora das faixas cobertas
+}
+
+/* ============================ POPULAR CONVÊNIOS ============================ */
+function initConvenios(){
+  const sel = $('convenio');
+  const porCat = {};
+  CONVENIOS.forEach(c=>{ (porCat[c.categoria] = porCat[c.categoria]||[]).push(c); });
+  const cats = Object.keys(porCat).sort((a,b)=>{
+    const ia=ORDEM_CATEGORIAS.indexOf(a), ib=ORDEM_CATEGORIAS.indexOf(b);
+    return (ia<0?99:ia)-(ib<0?99:ib);
+  });
+  cats.forEach(cat=>{
+    const og = document.createElement('optgroup');
+    og.label = cat;
+    porCat[cat].sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR')).forEach(c=>{
+      const o = document.createElement('option');
+      o.value = c.id;
+      o.textContent = `${c.nome} · ${c.uf}`;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+  $('badgeText').textContent = `${CONVENIOS.length} convênios · vigência 05–06/2026`;
+}
+
+/* ============================ RENDER ETAPAS ============================ */
+function onConvenioChange(){
+  const id = $('convenio').value;
+  state.conv = CONVENIOS.find(c=>c.id===id) || null;
+  state.ofertaIdx = 0; state.taxaIdx = 0; state.prazo = null;
+  renderConvMeta();
+  renderOfertas();
+  renderTaxas();
+  renderPrazos();
+  compute();
+}
+
+function renderConvMeta(){
+  const meta = $('convMeta');
+  if(!state.conv){ meta.classList.add('hidden'); meta.innerHTML=''; return; }
+  const oferta = state.conv.ofertas[state.ofertaIdx];
+  meta.classList.remove('hidden');
+  meta.innerHTML =
+    `<span>Vigência <b>${state.conv.vigencia}</b></span>`+
+    `<span>Parcela mín. <b>R$ ${num2.format(oferta.parcelaMin)}</b></span>`;
+}
+
+function renderOfertas(){
+  const field = $('ofertaField'), box = $('ofertaChips');
+  box.innerHTML='';
+  if(!state.conv || state.conv.ofertas.length<=1){ field.classList.add('hidden'); return; }
+  field.classList.remove('hidden');
+  state.conv.ofertas.forEach((of,i)=>{
+    const chip = document.createElement('button');
+    chip.type='button';
+    chip.className = 'chip'+(i===state.ofertaIdx?' active':'');
+    chip.textContent = of.rotulo;
+    chip.onclick = ()=>{ state.ofertaIdx=i; state.taxaIdx=0; state.prazo=null; renderConvMeta(); renderOfertas(); renderTaxas(); renderPrazos(); compute(); };
+    box.appendChild(chip);
+  });
+}
+
+function renderTaxas(){
+  const field = $('taxaField'), box = $('taxaChips');
+  box.innerHTML='';
+  const oferta = state.conv && state.conv.ofertas[state.ofertaIdx];
+  if(!oferta || oferta.taxas.length<=1){ field.classList.add('hidden'); return; }
+  field.classList.remove('hidden');
+  oferta.taxas.forEach((t,i)=>{
+    const chip = document.createElement('button');
+    chip.type='button';
+    chip.className = 'chip'+(i===state.taxaIdx?' active':'');
+    chip.textContent = `${fmtTaxa(t.taxa)} a.m.`;
+    chip.onclick = ()=>{ state.taxaIdx=i; state.prazo=null; renderTaxas(); renderPrazos(); compute(); };
+    box.appendChild(chip);
+  });
+}
+
+function renderPrazos(){
+  const field = $('prazoField'), sel = $('prazo');
+  sel.innerHTML='';
+  const oferta = state.conv && state.conv.ofertas[state.ofertaIdx];
+  const taxa = oferta && oferta.taxas[state.taxaIdx];
+  if(!taxa){ field.classList.add('hidden'); state.prazo=null; renderPrazoMeta(); return; }
+  field.classList.remove('hidden');
+  const prazos = Object.keys(taxa.mult).map(Number).sort((a,b)=>a-b);
+  prazos.forEach(p=>{
+    const o = document.createElement('option');
+    o.value = String(p);
+    o.textContent = `${p} meses — coeficiente ${fmtCoef(taxa.mult[String(p)])}`;
+    sel.appendChild(o);
+  });
+  // padrão: maior prazo (maior coeficiente)
+  const maior = prazos[prazos.length-1];
+  sel.value = String(maior);
+  state.prazo = maior;
+  renderPrazoMeta();
+}
+
+function renderPrazoMeta(){
+  const meta = $('prazoMeta');
+  const oferta = state.conv && state.conv.ofertas[state.ofertaIdx];
+  const taxa = oferta && oferta.taxas[state.taxaIdx];
+  const coef = (taxa && state.prazo) ? taxa.mult[String(state.prazo)] : null;
+  if(!coef){ meta.innerHTML=''; return; }
+  meta.innerHTML =
+    `<span>Coeficiente aplicado <b>${fmtCoef(coef)}</b></span>`+
+    `<span>Taxa <b>${fmtTaxa(taxa.taxa)} a.m.</b></span>`+
+    `<span>Comprometimento <b>${oferta.comprometimento}</b></span>`;
+}
+
+/* ============================ CÁLCULO / RESULTADO ============================ */
+function compute(){
+  const oferta = state.conv && state.conv.ofertas[state.ofertaIdx];
+  const taxa = oferta && oferta.taxas[state.taxaIdx];
+  const coef = (taxa && state.prazo) ? taxa.mult[String(state.prazo)] : null;
+
+  const big = $('valorFinal');
+  const cMxc = $('cellMxc'), cParc = $('cellParcela'), cPrazo = $('cellPrazo'), cTeto = $('cellTeto');
+  const warnBox = $('warnBox');
+
+  // células independentes
+  cPrazo.textContent = state.prazo ? `${state.prazo} meses` : '—';
+  cPrazo.className = 'rval'+(state.prazo?'':' dim');
+
+  cParc.textContent = state.margem!=null ? brl.format(state.margem) : '—';
+  cParc.className = 'rval'+(state.margem!=null?'':' dim');
+
+  let idadeFinal = null, teto = null;
+  if(state.idade!=null && state.prazo){
+    idadeFinal = state.idade + Math.ceil(state.prazo/12);
+    teto = tetoPorFaixa(idadeFinal);
+  }
+  if(state.idade==null){
+    cTeto.textContent = 'informe a idade'; cTeto.className = 'rval dim';
+  } else if(!state.prazo){
+    cTeto.textContent = '—'; cTeto.className = 'rval dim';
+  } else if(teto==null){
+    cTeto.textContent = 'fora da faixa'; cTeto.className = 'rval dim';
+  } else {
+    cTeto.textContent = brl.format(teto); cTeto.className = 'rval';
+  }
+
+  // valor principal
+  if(!coef || state.margem==null){
+    big.innerHTML = '<span class="dash"></span>';
+    cMxc.textContent = '—'; cMxc.className = 'rval dim';
+    warnBox.innerHTML = '';
+    return;
+  }
+
+  const valorBruto = state.margem * coef;
+  let valorFinal = valorBruto, tetoAplicado = false;
+  if(teto!=null && valorBruto>teto){ valorFinal = teto; tetoAplicado = true; }
+
+  big.textContent = brl.format(valorFinal);
+  cMxc.textContent = `${brl.format(state.margem)} × ${fmtCoef(coef)}`;
+  cMxc.className = 'rval';
+
+  // avisos
+  let html = '';
+  if(tetoAplicado){
+    html += `<div class="warn cap-applied"><span class="ic">✓</span><span>Valor bruto (${brl.format(valorBruto)}) excede o teto da faixa etária. Limite de <b>${brl.format(teto)}</b> aplicado.</span></div>`;
+  }
+  if(state.margem < oferta.parcelaMin){
+    html += `<div class="warn"><span class="ic">!</span><span>Margem informada (${brl.format(state.margem)}) está abaixo da parcela mínima do convênio (${brl.format(oferta.parcelaMin)}).</span></div>`;
+  }
+  if(state.idade!=null && state.idade<21){
+    html += `<div class="warn"><span class="ic">!</span><span>Idade abaixo de 21 anos — fora da faixa mínima prevista pelas regras de valor por idade.</span></div>`;
+  }
+  if(idadeFinal!=null && idadeFinal>79){
+    html += `<div class="warn"><span class="ic">!</span><span>Idade ao fim do contrato (${idadeFinal} anos) acima de 79 — fora das faixas de valor permitidas.</span></div>`;
+  }
+  warnBox.innerHTML = html;
+}
+
+/* ============================ EVENTOS ============================ */
+$('convenio').addEventListener('change', onConvenioChange);
+$('prazo').addEventListener('change', e=>{ const v=e.target.value; state.prazo = v?Number(v):null; renderPrazoMeta(); compute(); });
+$('margem').addEventListener('input', e=>{ state.margem = parseMoney(e.target.value); compute(); });
+$('margem').addEventListener('blur', e=>{
+  const v = parseMoney(e.target.value);
+  e.target.value = (v==null) ? '' : num2.format(v);
+});
+$('idade').addEventListener('input', e=>{
+  const digits = e.target.value.replace(/\D/g,'').slice(0,3);
+  e.target.value = digits;
+  state.idade = digits ? Number(digits) : null;
+  compute();
+});
+
+initConvenios();
+compute();
+</script>
+</body>
+</html>
