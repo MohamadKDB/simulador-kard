@@ -129,6 +129,7 @@
 
   /* ---------- Chips ---------- */
   .chips{display:flex;flex-direction:column;align-items:flex-start;gap:10px;}
+  .chips.row-chips{flex-direction:row;flex-wrap:wrap;}
   .chip{
     font-family:var(--body);font-size:14.5px;color:var(--muted);
     background:#F4F4F2;border:1.5px solid #E7E7E4;border-radius:11px;
@@ -287,7 +288,7 @@
     </div>
     <div class="eyebrow" id="heroEyebrow">CORRESPONDENTE BANCÁRIO</div>
     <h1 id="heroTitle">Simulador de Coeficientes</h1>
-    <p class="sub" id="heroSub">Cartão consignado — calcule o valor liberado a partir da margem apurada em cada convênio.</p>
+    <p class="sub" id="heroSub">Calcule o valor liberado a partir da margem disponível em cada convênio.</p>
     <span class="badge" id="heroBadge"><span class="dot">◆</span><span id="badgeText">35 convênios · vigência 05–06/2026</span></span>
     <p class="sub hidden" id="heroBack"><a class="back" href="#">← voltar ao simulador</a></p>
   </div>
@@ -295,21 +296,25 @@
 
 <main class="wrap" id="simView">
 
-  <!-- 01 Convênio -->
+  <!-- 01 Produto -->
   <section class="card">
-    <div class="step"><span class="num">01</span><span class="ttl">Convênio</span></div>
+    <div class="step"><span class="num">01</span><span class="ttl">Produto</span></div>
+    <div class="chips row-chips" id="produtoChips"></div>
+  </section>
+
+  <!-- 02 Convênio -->
+  <section class="card">
+    <div class="step"><span class="num">02</span><span class="ttl">Convênio</span></div>
     <div class="select-wrap">
       <select id="convenio">
         <option value="">Selecione o convênio…</option>
       </select>
     </div>
     <div class="meta hidden" id="convMeta"></div>
-  </section>
-
-  <!-- 02 Público-alvo -->
-  <section class="card hidden" id="ofertaField">
-    <div class="step"><span class="num">02</span><span class="ttl">Público-alvo</span></div>
-    <div class="chips" id="ofertaChips"></div>
+    <div class="hidden" id="ofertaField">
+      <label class="f">Público-alvo</label>
+      <div class="chips" id="ofertaChips"></div>
+    </div>
   </section>
 
   <!-- 03 Taxa -->
@@ -329,8 +334,8 @@
 
   <!-- 05 Margem -->
   <section class="card">
-    <div class="step"><span class="num">05</span><span class="ttl">Margem mensal apurada</span></div>
-    <p class="desc">Valor retornado pela gestora de margem para este cartão (já considerando o comprometimento do convênio).</p>
+    <div class="step"><span class="num">05</span><span class="ttl">Margem disponível</span></div>
+    <p class="desc">Valor retornado pela gestora de margem (já considerando o comprometimento do convênio).</p>
     <div class="igroup">
       <span class="addon pre">R$</span>
       <input type="text" inputmode="decimal" class="money has-pre" id="margem" placeholder="0,00" autocomplete="off">
@@ -461,7 +466,7 @@
 
 <footer>
   <p class="note">
-    <span class="src">Fonte:</span> Roteiros Operacionais Kard, vigência 05–06/2026 (pasta DRIVE CORBAN KARD). Faixas de valor por idade ao fim do contrato: 21–71 anos até R$ 100.000; 72–77 anos até R$ 35.000; 78–79 anos até R$ 14.000. Regra geral de comprometimento global: até 70% do contracheque. Este simulador cobre o produto Cartão (RCC/RMC/Adiantamento Salarial); roteiros de Empréstimo Consignado não estão incluídos.
+    <span class="src">Fonte:</span> Roteiros Operacionais Kard, vigência 05–06/2026 (pasta DRIVE CORBAN KARD). Faixas de valor por idade ao fim do contrato: 21–71 anos até R$ 100.000; 72–77 anos até R$ 35.000; 78–79 anos até R$ 14.000. Regra geral de comprometimento global: até 70% do contracheque. Produtos cobertos: Cartão Consignado (RCC/RMC/Adiantamento Salarial), Empréstimo Consignado e Compra de Dívida, conforme tabelas de multiplicadores vigentes.
     <a class="admin-link" href="#admin">admin</a>
   </p>
 </footer>
@@ -603,7 +608,18 @@ const FAIXAS_IDADE = [
 const ORDEM_CATEGORIAS = ["Prefeitura Municipal","Governo Estadual","Instituto de Previdência","Tribunal / Judiciário","Empréstimo Consignado","Compra de Dívida"];
 
 /* ============================ ESTADO ============================ */
-const state = {conv:null, ofertaIdx:0, taxaIdx:0, prazo:null, margem:null, idade:null};
+const state = {produto:'cartao', conv:null, ofertaIdx:0, taxaIdx:0, prazo:null, margem:null, idade:null};
+
+const PRODUTOS = [
+  {id:'cartao', label:'Cartão Consignado'},
+  {id:'emp',    label:'Empréstimo Consignado'},
+  {id:'cd',     label:'Compra de Dívida'}
+];
+function produtoDe(c){
+  if(c.categoria==='Empréstimo Consignado') return 'emp';
+  if(c.categoria==='Compra de Dívida') return 'cd';
+  return 'cartao';
+}
 
 /* ============================ HELPERS ============================ */
 const $ = id => document.getElementById(id);
@@ -625,11 +641,36 @@ function tetoPorFaixa(idadeFinal){
   return null; // fora das faixas cobertas
 }
 
-/* ============================ POPULAR CONVÊNIOS ============================ */
+/* ============================ PRODUTO / POPULAR CONVÊNIOS ============================ */
+function renderProdutos(){
+  const box = $('produtoChips');
+  box.innerHTML = '';
+  PRODUTOS.forEach(p=>{
+    const n = CONVENIOS.filter(c=>produtoDe(c)===p.id).length;
+    if(!n) return; // não mostra produto sem convênio
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'chip'+(p.id===state.produto?' active':'');
+    chip.textContent = p.label;
+    chip.onclick = ()=>{
+      if(state.produto===p.id) return;
+      state.produto = p.id;
+      state.conv = null; state.ofertaIdx = 0; state.taxaIdx = 0; state.prazo = null;
+      renderProdutos();
+      initConvenios();
+      renderConvMeta(); renderOfertas(); renderTaxas(); renderPrazos();
+      compute();
+    };
+    box.appendChild(chip);
+  });
+}
+
 function initConvenios(){
   const sel = $('convenio');
+  sel.innerHTML = '<option value="">Selecione o convênio…</option>';
+  const doProduto = CONVENIOS.filter(c=>produtoDe(c)===state.produto);
   const porCat = {};
-  CONVENIOS.forEach(c=>{ (porCat[c.categoria] = porCat[c.categoria]||[]).push(c); });
+  doProduto.forEach(c=>{ (porCat[c.categoria] = porCat[c.categoria]||[]).push(c); });
   const cats = Object.keys(porCat).sort((a,b)=>{
     const ia=ORDEM_CATEGORIAS.indexOf(a), ib=ORDEM_CATEGORIAS.indexOf(b);
     return (ia<0?99:ia)-(ib<0?99:ib);
@@ -1154,10 +1195,9 @@ async function commitJson(newData, message){
 }
 
 function rebuildSimulador(){
-  const sel = $('convenio');
-  sel.innerHTML = '<option value="">Selecione o convênio…</option>';
-  initConvenios();
   state.conv = null; state.ofertaIdx = 0; state.taxaIdx = 0; state.prazo = null;
+  renderProdutos();
+  initConvenios();
   renderConvMeta(); renderOfertas(); renderTaxas(); renderPrazos();
   compute();
 }
@@ -1259,7 +1299,7 @@ function route(){
   $('heroTitle').textContent = admin ? 'Gerenciar convênios' : 'Simulador de Coeficientes';
   $('heroSub').textContent = admin
     ? 'Adicione ou edite convênios. Ao salvar, a alteração é publicada no site em ~1 minuto.'
-    : 'Cartão consignado — calcule o valor liberado a partir da margem apurada em cada convênio.';
+    : 'Calcule o valor liberado a partir da margem disponível em cada convênio.';
   if(admin && !adminLoaded){ adminLoaded = true; adminLoad(); }
   window.scrollTo(0,0);
 }
@@ -1274,6 +1314,7 @@ window.addEventListener('hashchange', route);
       if(Array.isArray(d) && d.length) CONVENIOS = d;
     }
   }catch(e){ /* offline/local: usa o fallback embutido */ }
+  renderProdutos();
   initConvenios();
   compute();
   route();
