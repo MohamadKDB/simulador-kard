@@ -269,6 +269,31 @@
     background:#FFF7E8;border:1px solid #F3D48A;border-radius:11px;
     padding:11px 13px;font-size:13.5px;color:#7A5B12;margin-bottom:14px;
   }
+
+  /* ================= DESKTOP (≥900px) — grade 2 colunas ================= */
+  .rsdash{display:none;}
+  .bigcap{display:none;}
+  @media (min-width:900px){
+    .hero-inner, .wrap, footer{max-width:1200px;}
+    #simView{
+      display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;
+    }
+    #simView .card{margin-bottom:0;}
+    #simView .result{grid-column:1 / -1;margin:8px 0 10px;padding:30px 40px;}
+
+    /* resultado centralizado, valor em verde (formato aprovado no PC) */
+    .result .cap{display:block;text-align:center;font-size:15px;letter-spacing:5px;}
+    .result .big{justify-content:center;font-size:44px;color:var(--green);margin:14px 0 4px;}
+    .result .dash{display:none;}
+    .rsdash{display:inline;}
+    .bigcap{
+      display:block;text-align:center;font-family:var(--mono);font-size:12px;
+      color:rgba(255,255,255,.5);letter-spacing:1px;margin-bottom:6px;
+    }
+    .result .divider{margin:20px 0 22px;}
+    .rgrid{gap:26px 80px;}
+    .rcell .rval{font-size:17px;}
+  }
 </style>
 </head>
 <body>
@@ -355,7 +380,8 @@
   <!-- Resultado -->
   <section class="result" id="result">
     <div class="cap">VALOR LIBERADO ESTIMADO</div>
-    <div class="big" id="valorFinal"><span class="dash"></span></div>
+    <div class="big" id="valorFinal"><span class="dash"></span><span class="rsdash">R$ —</span></div>
+    <div class="bigcap">Valor estimado liberado</div>
     <div class="divider"></div>
     <div class="rgrid">
       <div class="rcell">
@@ -608,17 +634,25 @@ const FAIXAS_IDADE = [
 const ORDEM_CATEGORIAS = ["Prefeitura Municipal","Governo Estadual","Instituto de Previdência","Tribunal / Judiciário","Empréstimo Consignado","Compra de Dívida"];
 
 /* ============================ ESTADO ============================ */
-const state = {produto:'cartao', conv:null, ofertaIdx:0, taxaIdx:0, prazo:null, margem:null, idade:null};
+const state = {produto:'rmc', conv:null, ofertaIdx:0, taxaIdx:0, prazo:null, margem:null, idade:null};
 
 const PRODUTOS = [
-  {id:'cartao', label:'Cartão Consignado'},
-  {id:'emp',    label:'Empréstimo Consignado'},
-  {id:'cd',     label:'Compra de Dívida'}
+  {id:'rmc', label:'Cartão Consignado (RMC)'},
+  {id:'rcc', label:'Cartão Benefício (RCC)'},
+  {id:'emp', label:'Empréstimo Consignado'},
+  {id:'cd',  label:'Compra de Dívida'}
 ];
+/* Um convênio pode atender mais de um produto. Para cartão, o comprometimento
+   do roteiro diz quais margens existem (RMC, RCC ou ambas); sem menção, entra nos dois. */
 function produtoDe(c){
-  if(c.categoria==='Empréstimo Consignado') return 'emp';
-  if(c.categoria==='Compra de Dívida') return 'cd';
-  return 'cartao';
+  if(c.categoria==='Empréstimo Consignado') return new Set(['emp']);
+  if(c.categoria==='Compra de Dívida') return new Set(['cd']);
+  const txt = c.ofertas.map(o=>o.comprometimento||'').join(' ').toUpperCase();
+  const s = new Set();
+  if(txt.includes('RMC')) s.add('rmc');
+  if(txt.includes('RCC')) s.add('rcc');
+  if(!s.size){ s.add('rmc'); s.add('rcc'); }
+  return s;
 }
 
 /* ============================ HELPERS ============================ */
@@ -646,7 +680,7 @@ function renderProdutos(){
   const box = $('produtoChips');
   box.innerHTML = '';
   PRODUTOS.forEach(p=>{
-    const n = CONVENIOS.filter(c=>produtoDe(c)===p.id).length;
+    const n = CONVENIOS.filter(c=>produtoDe(c).has(p.id)).length;
     if(!n) return; // não mostra produto sem convênio
     const chip = document.createElement('button');
     chip.type = 'button';
@@ -668,7 +702,7 @@ function renderProdutos(){
 function initConvenios(){
   const sel = $('convenio');
   sel.innerHTML = '<option value="">Selecione o convênio…</option>';
-  const doProduto = CONVENIOS.filter(c=>produtoDe(c)===state.produto);
+  const doProduto = CONVENIOS.filter(c=>produtoDe(c).has(state.produto));
   const porCat = {};
   doProduto.forEach(c=>{ (porCat[c.categoria] = porCat[c.categoria]||[]).push(c); });
   const cats = Object.keys(porCat).sort((a,b)=>{
@@ -821,7 +855,7 @@ function compute(){
 
   // valor principal
   if(!coef || state.margem==null){
-    big.innerHTML = '<span class="dash"></span>';
+    big.innerHTML = '<span class="dash"></span><span class="rsdash">R$ —</span>';
     cMxc.textContent = '—'; cMxc.className = 'rval dim';
     warnBox.innerHTML = '';
     return;
