@@ -926,8 +926,12 @@ function renderAdminList(){
     div.innerHTML =
       `<div><div class="ci-nome">${esc(c.nome)} · ${esc(c.uf)}</div>`+
       `<div class="ci-meta">${esc(c.categoria)} · vig. ${esc(c.vigencia)} · ${c.ofertas.length} oferta(s), ${nTaxas} taxa(s)</div></div>`+
-      `<div class="ci-actions"><button class="btn btn-ghost btn-sm">Editar</button></div>`;
-    div.querySelector('button').onclick = ()=> openEditor(i);
+      `<div class="ci-actions">`+
+      `<button class="btn btn-ghost btn-sm" data-a="edit">Editar</button>`+
+      `<button class="btn btn-danger btn-sm" data-a="del" title="Excluir convênio">Excluir</button>`+
+      `</div>`;
+    div.querySelector('[data-a="edit"]').onclick = ()=> openEditor(i);
+    div.querySelector('[data-a="del"]').onclick = e=> excluirConvenio(i, e.currentTarget);
     box.appendChild(div);
   });
   if(!box.children.length){
@@ -1180,24 +1184,30 @@ async function salvar(){
   }
 }
 
-async function excluir(){
-  if(readOnly){ toast('Conecte com a senha para salvar.', true); return; }
-  const nome = aData[editIdx].nome;
-  if(!confirm(`Excluir o convênio "${nome}"? Essa ação será publicada no site.`)) return;
+async function excluirConvenio(i, btn){
+  if(readOnly){ toast('Conecte com a senha para salvar.', true); return false; }
+  const nome = aData[i].nome;
+  if(!confirm(`Excluir o convênio "${nome}"? Essa ação será publicada no site.`)) return false;
   const newData = aData.slice();
-  newData.splice(editIdx,1);
-  const btn = $('btnExcluir');
-  btn.disabled = true;
+  newData.splice(i,1);
+  const rotuloBtn = btn ? btn.textContent : '';
+  if(btn){ btn.disabled = true; btn.textContent = '…'; }
   try{
     await commitJson(newData, `remove convênio ${nome}`);
     toast(`✓ ${nome} excluído.`);
-    closeEditor();
     renderAdminList();
+    return true;
   }catch(e){
     toast(e.message, true);
+    return false;
   }finally{
-    btn.disabled = false;
+    if(btn){ btn.disabled = false; btn.textContent = rotuloBtn; }
   }
+}
+
+async function excluir(){
+  const ok = await excluirConvenio(editIdx, $('btnExcluir'));
+  if(ok) closeEditor();
 }
 
 /* ---------- eventos admin ---------- */
