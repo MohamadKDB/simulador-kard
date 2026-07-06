@@ -200,7 +200,7 @@
     "nome": "Serra — Comissionados",
     "categoria": "Prefeitura Municipal",
     "uf": "ES",
-    "vigencia": "27.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Comissionados (mín. 2 anos)",
@@ -212,10 +212,10 @@
           {
             "taxa": 5.5,
             "mult": {
-              "12": 7.83,
-              "18": 10.22,
-              "20": 10.86,
-              "24": 11.95
+              "12": 8.15,
+              "18": 10.78,
+              "20": 11.5,
+              "24": 12.75
             }
           }
         ]
@@ -227,24 +227,25 @@
     "nome": "TJ Alagoas",
     "categoria": "Tribunal / Judiciário",
     "uf": "AL",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos · Pensionistas",
         "comprometimento": "5% (RMC + RCC)",
-        "prazoMin": 36,
+        "prazoMin": 24,
         "prazoMax": 96,
         "parcelaMin": 30,
         "taxas": [
           {
             "taxa": 3.99,
             "mult": {
-              "36": 17.59,
-              "48": 19.72,
-              "60": 21.06,
-              "72": 21.89,
-              "84": 22.41,
-              "96": 22.74
+              "24": 14.12,
+              "36": 17.52,
+              "48": 19.65,
+              "60": 20.97,
+              "72": 21.8,
+              "84": 22.32,
+              "96": 22.65
             }
           }
         ]
@@ -366,7 +367,7 @@
     "nome": "Cachoeirinha",
     "categoria": "Prefeitura Municipal",
     "uf": "RS",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos · Estatutários",
@@ -378,12 +379,12 @@
           {
             "taxa": 4.5,
             "mult": {
-              "36": 15.44,
-              "48": 16.91,
-              "60": 17.74,
-              "72": 18.2,
-              "84": 18.47,
-              "96": 18.61
+              "36": 16.35,
+              "48": 18.08,
+              "60": 19.1,
+              "72": 19.71,
+              "84": 20.06,
+              "96": 20.27
             }
           }
         ]
@@ -625,7 +626,7 @@
     "nome": "Aquiraz",
     "categoria": "Prefeitura Municipal",
     "uf": "CE",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos",
@@ -635,13 +636,12 @@
         "parcelaMin": 30,
         "taxas": [
           {
-            "taxa": 4.9,
+            "taxa": 4.5,
             "mult": {
-              "36": 15.1,
-              "40": 15.65,
-              "48": 16.54,
-              "50": 16.71,
-              "60": 17.35
+              "36": 16.02,
+              "40": 16.69,
+              "48": 17.72,
+              "60": 18.72
             }
           }
         ]
@@ -653,7 +653,7 @@
     "nome": "Sorocaba",
     "categoria": "Prefeitura Municipal",
     "uf": "SP",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos · Estatutários",
@@ -665,10 +665,10 @@
           {
             "taxa": 4.5,
             "mult": {
-              "36": 14.96,
-              "48": 16.38,
-              "60": 17.18,
-              "72": 17.63
+              "36": 15.86,
+              "48": 17.54,
+              "60": 18.53,
+              "72": 19.12
             }
           }
         ]
@@ -709,7 +709,7 @@
     "nome": "PREVIJUNO",
     "categoria": "Instituto de Previdência",
     "uf": "CE",
-    "vigencia": "15.06.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Aposentados · Pensionistas",
@@ -719,7 +719,7 @@
         "parcelaMin": 30,
         "taxas": [
           {
-            "taxa": 4.5,
+            "taxa": 4.9,
             "mult": {
               "36": 14.92,
               "48": 16.34,
@@ -765,7 +765,7 @@
     "nome": "Governo do Piauí",
     "categoria": "Governo Estadual",
     "uf": "PI",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos · Aposentados · Pensionistas",
@@ -775,14 +775,14 @@
         "parcelaMin": 30,
         "taxas": [
           {
-            "taxa": 4.9,
+            "taxa": 4.5,
             "mult": {
-              "36": 14.75,
-              "48": 16.15,
-              "60": 16.94,
-              "72": 17.38,
-              "84": 17.63,
-              "96": 17.77
+              "36": 15.74,
+              "48": 17.41,
+              "60": 18.39,
+              "72": 18.97,
+              "84": 19.31,
+              "96": 19.51
             }
           }
         ]
@@ -794,7 +794,7 @@
     "nome": "IPMO — Osasco",
     "categoria": "Instituto de Previdência",
     "uf": "SP",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Aposentados · Pensionistas",
@@ -804,14 +804,14 @@
         "parcelaMin": 30,
         "taxas": [
           {
-            "taxa": 4.9,
+            "taxa": 4.5,
             "mult": {
-              "36": 16.34,
-              "48": 18.07,
+              "36": 16.33,
+              "48": 18.06,
               "60": 19.08,
-              "72": 19.69,
-              "84": 20.04,
-              "96": 20.25
+              "72": 19.68,
+              "84": 20.03,
+              "96": 20.24
             }
           }
         ]
@@ -852,13 +852,13 @@
     "nome": "Cabedelo",
     "categoria": "Prefeitura Municipal",
     "uf": "PB",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos",
         "comprometimento": "10%",
         "prazoMin": 36,
-        "prazoMax": 60,
+        "prazoMax": 96,
         "parcelaMin": 30,
         "taxas": [
           {
@@ -868,7 +868,10 @@
               "40": 15.55,
               "48": 16.41,
               "50": 16.58,
-              "60": 17.21
+              "60": 17.21,
+              "72": 17.66,
+              "84": 17.92,
+              "96": 18.06
             }
           }
         ]
@@ -880,7 +883,7 @@
     "nome": "Bragança Paulista",
     "categoria": "Prefeitura Municipal",
     "uf": "SP",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos · Estatutários · Efetivos em comissão",
@@ -892,10 +895,10 @@
           {
             "taxa": 4.5,
             "mult": {
-              "36": 15.32,
-              "48": 16.78,
-              "60": 17.6,
-              "72": 18.06
+              "36": 16.23,
+              "48": 17.95,
+              "60": 18.97,
+              "72": 20.12
             }
           }
         ]
@@ -907,7 +910,7 @@
     "nome": "São José dos Campos",
     "categoria": "Prefeitura Municipal",
     "uf": "SP",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos",
@@ -919,12 +922,12 @@
           {
             "taxa": 4.5,
             "mult": {
-              "36": 16.19,
-              "48": 16.86,
-              "60": 17.68,
-              "72": 18.15,
-              "84": 18.41,
-              "96": 18.56
+              "36": 16.31,
+              "48": 18.03,
+              "60": 19.05,
+              "72": 19.65,
+              "84": 20.0,
+              "96": 20.21
             }
           }
         ]
@@ -936,46 +939,42 @@
     "nome": "Belo Horizonte",
     "categoria": "Prefeitura Municipal",
     "uf": "MG",
-    "vigencia": "03.06.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
-        "rotulo": "Efetivos · Aposentados · Pensionistas · Comissionados",
+        "rotulo": "Efetivos · Aposentados · Pensionistas",
         "comprometimento": "5%",
         "prazoMin": 36,
         "prazoMax": 96,
         "parcelaMin": 30,
         "taxas": [
           {
-            "taxa": 3.05,
-            "mult": {
-              "36": 17.32,
-              "48": 19.42,
-              "60": 20.73,
-              "72": 21.55,
-              "84": 22.07,
-              "96": 22.39
-            }
-          },
-          {
-            "taxa": 3.5,
-            "mult": {
-              "36": 18.68,
-              "48": 21.26,
-              "60": 22.97,
-              "72": 24.1,
-              "84": 24.85,
-              "96": 25.35
-            }
-          },
-          {
             "taxa": 3.99,
             "mult": {
-              "36": 20.08,
-              "48": 23.2,
-              "60": 25.37,
-              "72": 26.89,
-              "84": 27.94,
-              "96": 28.68
+              "36": 17.25,
+              "48": 19.34,
+              "60": 20.65,
+              "72": 21.47,
+              "84": 21.98,
+              "96": 22.3
+            }
+          }
+        ]
+      },
+      {
+        "rotulo": "Comissionados",
+        "comprometimento": "5%",
+        "prazoMin": 12,
+        "prazoMax": 24,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 4.9,
+            "mult": {
+              "12": 8.06,
+              "18": 10.66,
+              "20": 11.37,
+              "24": 12.61
             }
           }
         ]
@@ -987,7 +986,7 @@
     "nome": "São Paulo",
     "categoria": "Prefeitura Municipal",
     "uf": "SP",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos · Estatutários · Aposentados/Pensionistas (IPREM)",
@@ -997,14 +996,14 @@
         "parcelaMin": 30,
         "taxas": [
           {
-            "taxa": 3.99,
+            "taxa": 2.99,
             "mult": {
-              "36": 17.29,
-              "48": 19.39,
-              "60": 20.7,
-              "72": 21.52,
-              "84": 22.04,
-              "96": 22.36
+              "36": 20.36,
+              "48": 23.57,
+              "60": 25.82,
+              "72": 27.4,
+              "84": 28.52,
+              "96": 29.3
             }
           }
         ]
@@ -1016,7 +1015,7 @@
     "nome": "Porto Alegre",
     "categoria": "Prefeitura Municipal",
     "uf": "RS",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos · Aposentados · Pensionistas",
@@ -1028,12 +1027,12 @@
           {
             "taxa": 3.99,
             "mult": {
-              "36": 15.89,
-              "48": 17.57,
-              "60": 18.56,
-              "72": 19.14,
-              "84": 19.49,
-              "96": 19.69
+              "36": 17.25,
+              "48": 19.34,
+              "60": 20.65,
+              "72": 21.47,
+              "84": 21.98,
+              "96": 22.3
             }
           }
         ]
@@ -1086,7 +1085,7 @@
     "nome": "Governo de São Paulo",
     "categoria": "Governo Estadual",
     "uf": "SP",
-    "vigencia": "27.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos SEFAZ · Aposentados/Pensionistas SPPREV · PM",
@@ -1096,14 +1095,14 @@
         "parcelaMin": 30,
         "taxas": [
           {
-            "taxa": 3.99,
+            "taxa": 2.99,
             "mult": {
-              "36": 17.59,
-              "48": 19.72,
-              "60": 21.06,
-              "72": 21.89,
-              "84": 22.41,
-              "96": 22.74
+              "36": 20.36,
+              "48": 23.57,
+              "60": 25.82,
+              "72": 27.4,
+              "84": 28.52,
+              "96": 29.3
             }
           }
         ]
@@ -1115,7 +1114,7 @@
     "nome": "Cajamar",
     "categoria": "Prefeitura Municipal",
     "uf": "SP",
-    "vigencia": "20.05.2026",
+    "vigencia": "06.07.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos · Estatutários",
@@ -1127,12 +1126,602 @@
           {
             "taxa": 4.5,
             "mult": {
-              "36": 15.32,
-              "48": 16.78,
-              "60": 17.6,
-              "72": 18.06,
-              "84": 18.32,
-              "96": 18.74
+              "36": 16.23,
+              "48": 17.95,
+              "60": 18.97,
+              "72": 19.56,
+              "84": 19.91,
+              "96": 20.12
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "maua",
+    "nome": "Mauá",
+    "categoria": "Prefeitura Municipal",
+    "uf": "SP",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 4.5,
+            "mult": {
+              "36": 16.35,
+              "48": 18.08,
+              "60": 19.1,
+              "72": 19.71,
+              "84": 20.06,
+              "96": 20.27
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "tocantins",
+    "nome": "Tocantins",
+    "categoria": "Governo Estadual",
+    "uf": "TO",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 60,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 4.9,
+            "mult": {
+              "36": 15.38,
+              "48": 16.85,
+              "60": 17.67
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "chapeco",
+    "nome": "Chapecó",
+    "categoria": "Prefeitura Municipal",
+    "uf": "SC",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 3.99,
+            "mult": {
+              "36": 17.39,
+              "48": 19.49,
+              "60": 20.81,
+              "72": 21.64,
+              "84": 22.15,
+              "96": 22.47
+            }
+          },
+          {
+            "taxa": 4.2,
+            "mult": {
+              "36": 16.85,
+              "48": 18.78,
+              "60": 19.96,
+              "72": 20.68,
+              "84": 21.12,
+              "96": 21.38
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "porto-velho",
+    "nome": "Porto Velho",
+    "categoria": "Prefeitura Municipal",
+    "uf": "RO",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 4.5,
+            "mult": {
+              "36": 16.23,
+              "48": 17.95,
+              "60": 18.97,
+              "72": 19.56,
+              "84": 19.91,
+              "96": 20.12
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "barcarena",
+    "nome": "Barcarena",
+    "categoria": "Prefeitura Municipal",
+    "uf": "PA",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 4.5,
+            "mult": {
+              "36": 16.1,
+              "48": 17.8,
+              "60": 18.81,
+              "72": 19.4,
+              "84": 19.75,
+              "96": 19.95
+            }
+          },
+          {
+            "taxa": 4.8,
+            "mult": {
+              "36": 15.49,
+              "48": 17.0,
+              "60": 17.86,
+              "72": 18.35,
+              "84": 18.63,
+              "96": 18.79
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "campina-grande",
+    "nome": "Campina Grande",
+    "categoria": "Prefeitura Municipal",
+    "uf": "PB",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 4.5,
+            "mult": {
+              "36": 16.26,
+              "48": 17.98,
+              "60": 18.99,
+              "72": 19.59,
+              "84": 19.94,
+              "96": 20.15
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "araraquara",
+    "nome": "Araraquara",
+    "categoria": "Prefeitura Municipal",
+    "uf": "SP",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 3.99,
+            "mult": {
+              "36": 17.61,
+              "48": 19.75,
+              "60": 21.09,
+              "72": 21.92,
+              "84": 22.44,
+              "96": 22.77
+            }
+          },
+          {
+            "taxa": 4.5,
+            "mult": {
+              "36": 16.35,
+              "48": 18.08,
+              "60": 19.1,
+              "72": 19.71,
+              "84": 20.06,
+              "96": 20.27
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "campinas",
+    "nome": "Campinas",
+    "categoria": "Prefeitura Municipal",
+    "uf": "SP",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 4.5,
+            "mult": {
+              "36": 16.07,
+              "48": 17.77,
+              "60": 18.77,
+              "72": 19.36,
+              "84": 19.71,
+              "96": 19.92
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "gov-goias",
+    "nome": "Governo de Goiás",
+    "categoria": "Governo Estadual",
+    "uf": "GO",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 24,
+        "prazoMax": 36,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 5.5,
+            "mult": {
+              "24": 11.53,
+              "36": 13.62
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "compra-divida",
+    "nome": "Compra de Dívida",
+    "categoria": "Compra de Dívida",
+    "uf": "BR",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Compra de dívida",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 3.8,
+            "mult": {
+              "36": 17.96,
+              "48": 20.25,
+              "60": 21.72,
+              "72": 22.65,
+              "84": 23.25,
+              "96": 23.64
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "compra-divida-alagoas",
+    "nome": "Compra de Dívida — Alagoas",
+    "categoria": "Compra de Dívida",
+    "uf": "AL",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Compra de dívida",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 24,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 3.99,
+            "mult": {
+              "24": 14.05,
+              "36": 17.43,
+              "48": 19.54,
+              "60": 20.87,
+              "72": 21.69,
+              "84": 22.21,
+              "96": 22.53
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "emp-sapucaia",
+    "nome": "Sapucaia do Sul (EMP)",
+    "categoria": "Empréstimo Consignado",
+    "uf": "RS",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Empréstimo consignado",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 12,
+        "prazoMax": 120,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 2.4,
+            "mult": {
+              "12": 9.66,
+              "24": 16.92,
+              "36": 22.39,
+              "48": 26.5,
+              "60": 29.59,
+              "72": 31.92,
+              "84": 33.67,
+              "96": 34.99,
+              "120": 36.73
+            }
+          },
+          {
+            "taxa": 2.99,
+            "mult": {
+              "12": 9.25,
+              "24": 15.74,
+              "36": 20.3,
+              "48": 23.5,
+              "60": 25.75,
+              "72": 27.32,
+              "84": 28.43,
+              "96": 29.21,
+              "120": 30.14
+            }
+          },
+          {
+            "taxa": 3.4,
+            "mult": {
+              "12": 8.97,
+              "24": 14.98,
+              "36": 19.0,
+              "48": 21.7,
+              "60": 23.5,
+              "72": 24.71,
+              "84": 25.51,
+              "96": 26.05,
+              "120": 26.66
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "emp-sao-paulo",
+    "nome": "São Paulo (EMP)",
+    "categoria": "Empréstimo Consignado",
+    "uf": "SP",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Empréstimo consignado",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 12,
+        "prazoMax": 120,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 2.35,
+            "mult": {
+              "12": 10.01,
+              "24": 17.59,
+              "36": 23.33,
+              "48": 27.67,
+              "60": 30.95,
+              "72": 33.43,
+              "84": 35.31,
+              "96": 36.74,
+              "120": 38.63
+            }
+          },
+          {
+            "taxa": 2.45,
+            "mult": {
+              "12": 9.95,
+              "24": 17.4,
+              "36": 22.97,
+              "48": 27.13,
+              "60": 30.24,
+              "72": 32.57,
+              "84": 34.32,
+              "96": 35.62,
+              "120": 37.32
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "emp-mossoro",
+    "nome": "Mossoró (EMP)",
+    "categoria": "Empréstimo Consignado",
+    "uf": "RN",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Empréstimo consignado",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 12,
+        "prazoMax": 120,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 2.4,
+            "mult": {
+              "12": 9.66,
+              "24": 16.92,
+              "36": 22.39,
+              "48": 26.5,
+              "60": 29.59,
+              "72": 31.92,
+              "84": 33.67,
+              "96": 34.99,
+              "120": 36.73
+            }
+          },
+          {
+            "taxa": 2.99,
+            "mult": {
+              "12": 9.25,
+              "24": 15.74,
+              "36": 20.3,
+              "48": 23.5,
+              "60": 25.75,
+              "72": 27.32,
+              "84": 28.43,
+              "96": 29.21,
+              "120": 30.14
+            }
+          },
+          {
+            "taxa": 3.4,
+            "mult": {
+              "12": 8.97,
+              "24": 14.98,
+              "36": 19.0,
+              "48": 21.7,
+              "60": 23.5,
+              "72": 24.71,
+              "84": 25.51,
+              "96": 26.05,
+              "120": 26.66
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "emp-rio-de-janeiro",
+    "nome": "Rio de Janeiro (EMP)",
+    "categoria": "Empréstimo Consignado",
+    "uf": "RJ",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Empréstimo consignado",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 12,
+        "prazoMax": 120,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 2.1,
+            "mult": {
+              "12": 9.88,
+              "24": 17.57,
+              "36": 23.57,
+              "48": 28.24,
+              "60": 31.89,
+              "72": 34.72,
+              "84": 36.94,
+              "96": 38.66,
+              "120": 41.05
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "emp-belo-horizonte",
+    "nome": "Belo Horizonte (EMP)",
+    "categoria": "Empréstimo Consignado",
+    "uf": "MG",
+    "vigencia": "06.07.2026",
+    "ofertas": [
+      {
+        "rotulo": "Empréstimo consignado",
+        "comprometimento": "consultar roteiro",
+        "prazoMin": 12,
+        "prazoMax": 120,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 2.5,
+            "mult": {
+              "12": 9.59,
+              "24": 16.71,
+              "36": 22.01,
+              "48": 25.95,
+              "60": 28.88,
+              "72": 31.06,
+              "84": 32.68,
+              "96": 33.89,
+              "120": 35.45
+            }
+          },
+          {
+            "taxa": 2.99,
+            "mult": {
+              "12": 9.25,
+              "24": 15.74,
+              "36": 20.3,
+              "48": 23.501,
+              "60": 25.75,
+              "72": 27.32,
+              "84": 28.43,
+              "96": 29.21,
+              "120": 30.14
             }
           }
         ]
