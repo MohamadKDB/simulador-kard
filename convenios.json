@@ -1477,36 +1477,6 @@
     ]
   },
   {
-    "id": "compra-divida-alagoas",
-    "nome": "Compra de Dívida — Alagoas",
-    "categoria": "Compra de Dívida",
-    "uf": "AL",
-    "vigencia": "06.07.2026",
-    "ofertas": [
-      {
-        "rotulo": "Compra de dívida",
-        "comprometimento": "consultar roteiro",
-        "prazoMin": 24,
-        "prazoMax": 96,
-        "parcelaMin": 30,
-        "taxas": [
-          {
-            "taxa": 3.99,
-            "mult": {
-              "24": 14.05,
-              "36": 17.43,
-              "48": 19.54,
-              "60": 20.87,
-              "72": 21.69,
-              "84": 22.21,
-              "96": 22.53
-            }
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "emp-sapucaia",
     "nome": "Sapucaia do Sul (EMP)",
     "categoria": "Empréstimo Consignado",
