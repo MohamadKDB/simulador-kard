@@ -170,6 +170,7 @@
     font-variant-numeric:tabular-nums;word-break:break-word;
   }
   .rcell .rval.dim{color:rgba(255,255,255,.65);}
+  .rcell .rval.hl{color:var(--green);font-weight:600;}
 
   /* ---------- Warnings ---------- */
   .warn{
@@ -280,6 +281,8 @@
     }
     #simView .card{margin-bottom:0;}
     #simView .result{grid-column:1 / -1;margin:8px 0 10px;padding:30px 40px;}
+    #cardSaldo{grid-column:1 / -1;}
+    #cardSaldo .igroup{max-width:420px;}
 
     /* resultado centralizado, valor em verde (formato aprovado no PC) */
     .result .cap{display:block;text-align:center;font-size:15px;letter-spacing:5px;}
@@ -377,6 +380,16 @@
     </div>
   </section>
 
+  <!-- 07 Saldo devedor -->
+  <section class="card" id="cardSaldo">
+    <div class="step"><span class="num">07</span><span class="ttl">Saldo devedor <em>(opcional)</em></span></div>
+    <p class="desc">Valor de quitação informado pelo banco atual — usado para calcular o saldo líquido da operação.</p>
+    <div class="igroup">
+      <span class="addon pre">R$</span>
+      <input type="text" inputmode="decimal" class="money has-pre" id="saldoDevedor" placeholder="0,00" autocomplete="off">
+    </div>
+  </section>
+
   <!-- Resultado -->
   <section class="result" id="result">
     <div class="cap">VALOR LIBERADO ESTIMADO</div>
@@ -399,6 +412,14 @@
       <div class="rcell">
         <div class="rlbl">TETO POR IDADE</div>
         <div class="rval dim" id="cellTeto">informe a idade</div>
+      </div>
+      <div class="rcell">
+        <div class="rlbl">SALDO DEVEDOR</div>
+        <div class="rval dim" id="cellSaldoDev">—</div>
+      </div>
+      <div class="rcell">
+        <div class="rlbl">SALDO LÍQUIDO</div>
+        <div class="rval dim" id="cellLiquido">—</div>
       </div>
     </div>
     <div id="warnBox"></div>
@@ -829,7 +850,12 @@ function compute(){
 
   const big = $('valorFinal');
   const cMxc = $('cellMxc'), cParc = $('cellParcela'), cPrazo = $('cellPrazo'), cTeto = $('cellTeto');
+  const cSaldoDev = $('cellSaldoDev'), cLiquido = $('cellLiquido');
   const warnBox = $('warnBox');
+
+  const saldoDev = parseMoney($('saldoDevedor').value);
+  cSaldoDev.textContent = saldoDev!=null ? brl.format(saldoDev) : '—';
+  cSaldoDev.className = 'rval'+(saldoDev!=null?'':' dim');
 
   // células independentes
   cPrazo.textContent = state.prazo ? `${state.prazo} meses` : '—';
@@ -857,6 +883,7 @@ function compute(){
   if(!coef || state.margem==null){
     big.innerHTML = '<span class="dash"></span><span class="rsdash">R$ —</span>';
     cMxc.textContent = '—'; cMxc.className = 'rval dim';
+    cLiquido.textContent = '—'; cLiquido.className = 'rval dim';
     warnBox.innerHTML = '';
     return;
   }
@@ -869,8 +896,23 @@ function compute(){
   cMxc.textContent = `${brl.format(state.margem)} × ${fmtCoef(coef)}`;
   cMxc.className = 'rval';
 
+  // saldo líquido = valor liberado (após teto) − saldo devedor
+  let liquidoNegativo = false;
+  if(saldoDev!=null){
+    const liquido = valorFinal - saldoDev;
+    cLiquido.textContent = brl.format(liquido);
+    cLiquido.className = 'rval hl';
+    liquidoNegativo = liquido < 0;
+  } else {
+    cLiquido.textContent = '—';
+    cLiquido.className = 'rval dim';
+  }
+
   // avisos
   let html = '';
+  if(liquidoNegativo){
+    html += `<div class="warn"><span class="ic">!</span><span>Saldo devedor (${brl.format(saldoDev)}) maior que o valor liberado (${brl.format(valorFinal)}) — saldo líquido negativo.</span></div>`;
+  }
   if(tetoAplicado){
     html += `<div class="warn cap-applied"><span class="ic">✓</span><span>Valor bruto (${brl.format(valorBruto)}) excede o teto da faixa etária. Limite de <b>${brl.format(teto)}</b> aplicado.</span></div>`;
   }
@@ -899,6 +941,11 @@ $('idade').addEventListener('input', e=>{
   e.target.value = digits;
   state.idade = digits ? Number(digits) : null;
   compute();
+});
+$('saldoDevedor').addEventListener('input', compute);
+$('saldoDevedor').addEventListener('blur', e=>{
+  const v = parseMoney(e.target.value);
+  e.target.value = (v==null) ? '' : num2.format(v);
 });
 
 /* ================================================================
