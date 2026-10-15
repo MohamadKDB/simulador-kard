@@ -1810,5 +1810,34 @@
         ]
       }
     ]
+  },
+  {
+    "id": "governo-de-sao-paulo",
+    "nome": "Governo de São Paulo",
+    "categoria": "Governo Estadual",
+    "uf": "SP",
+    "vigencia": "15.10.2026",
+    "ofertas": [
+      {
+        "rotulo": "Efetivos SEFAZ · Aposentados/Pensionistas SPPREV · PM",
+        "comprometimento": "15%",
+        "prazoMin": 36,
+        "prazoMax": 96,
+        "parcelaMin": 30,
+        "taxas": [
+          {
+            "taxa": 3.99,
+            "mult": {
+              "36": 17.59,
+              "48": 19.72,
+              "60": 21.06,
+              "72": 21.89,
+              "84": 22.41,
+              "96": 22.74
+            }
+          }
+        ]
+      }
+    ]
   }
 ]
