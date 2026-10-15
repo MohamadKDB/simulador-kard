@@ -1085,7 +1085,7 @@
     "nome": "Governo de São Paulo",
     "categoria": "Governo Estadual",
     "uf": "SP",
-    "vigencia": "06.07.2026",
+    "vigencia": "15.10.2026",
     "ofertas": [
       {
         "rotulo": "Efetivos SEFAZ · Aposentados/Pensionistas SPPREV · PM",
@@ -1103,6 +1103,36 @@
               "72": 27.4,
               "84": 28.52,
               "96": 29.3
+            }
+          },
+          {
+            "taxa": 3.2,
+            "mult": {
+              "96": 27.64
+            }
+          },
+          {
+            "taxa": 3.35,
+            "mult": {
+              "96": 26.53
+            }
+          },
+          {
+            "taxa": 3.6,
+            "mult": {
+              "96": 24.83
+            }
+          },
+          {
+            "taxa": 3.8,
+            "mult": {
+              "96": 23.61
+            }
+          },
+          {
+            "taxa": 4.2,
+            "mult": {
+              "96": 21.44
             }
           }
         ]
